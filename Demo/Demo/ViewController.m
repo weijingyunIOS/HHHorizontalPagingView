@@ -110,16 +110,11 @@
 
 // 点击segment
 - (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelected:(UIButton *)item atIndex:(NSInteger)selectedIndex{
-
+    NSLog(@"%s",__func__);
 }
 
 - (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelectedSameItem:(UIButton *)item atIndex:(NSInteger)selectedIndex{
-
-}
-
-// 监听当前的scrollView
-- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollViewDidScroll:(UIScrollView *)scrollView{
-
+    NSLog(@"%s",__func__);
 }
 
 #pragma mark - 懒加载
