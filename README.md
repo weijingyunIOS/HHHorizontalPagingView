@@ -25,15 +25,17 @@
 
 1.[响应者链条](http://www.jianshu.com/p/2c5678c659d5)可以看看该文章 以下是摘抄：
 
-		iOS使用“命中测试”（hit-testing）去寻找触摸发生下的view。命中测试会执行检测判断是否改触摸点发生在某个具体的view的相对边界之内。如果检测是的，它就会递归的去检测该view的所有子view。该view的层级最底端view包含触摸点，它就成为了“命中测试view”。之后iOS就会决定谁是命中测试view,并且递交触摸事件给它处理。
-		命中测试view 被赋予了第一个处理触摸事件的机会，如果命中测试view不能处理该事件，该事件就会交付给view响应者链的上一级处理直到系统找到一个能够处理该事件的对象。
+	iOS使用“命中测试”（hit-testing）去寻找触摸发生下的view。命中测试会执行检测判断
+	是否改触摸点发生在某个具体的view的相对边界之内。如果检测是的，它就会递归的去检测该view的	所有子view。该view的层级最底端view包含触摸点，它就成为了“命中测试view”。之后iOS就会决	定谁是命中测试view,并且递交触摸事件给它处理。
+	
+	命中测试view 被赋予了第一个处理触摸事件的机会，如果命中测试view不能处理该事件，该事件就	会交付给view响应者链的上一级处理直到系统找到一个能够处理该事件的对象。
 	
 2.接起响应者链条
 	
-		Huanhoo 使用@property (nonatomic, copy) void (^clickEventViewsBlock)(UIView *eventView);来处理点击事件，而eventView就是 命中测试view ， 而我要做的就是通过这个命中测试view向上查找处理该事件。
-		实现方法：
-		引入UIView+WhenTappedBlocks这是一个手势处理的分类，
-		#pragma mark - 模拟响应者链条 由被触发的View 向它的兄弟控件 父控件 延伸查找响应
+	Huanhoo 使用@property (nonatomic, copy) void (^clickEventViewsBlock)	(UIView *eventView);来处理点击事件，而eventView就是 命中测试view ， 而我要做的	就是通过这个命中测试view向上查找处理该事件。
+	实现方法：
+	引入UIView+WhenTappedBlocks这是一个手势处理的分类，
+	#pragma mark - 模拟响应者链条 由被触发的View 向它的兄弟控件 父控件 延伸查找响应
 		- (void)viewWasTappedPoint:(CGPoint)point{
 		    [self clickOnThePoint:point];
 		}
@@ -83,7 +85,7 @@
 	@property (nonatomic, assign) CGFloat maxCacheCout;
 	该属性是最大的View引用数，超过的会释放回收。
 	
-	一个界面的展现，分为数据和视图，其中大部分内存为视图所占用，我们只需要保存界面数据，和离开界面时的位置，下次创建时还原即可，不过视图的创建和释放都是比较耗性能的，会卡顿主线程。
+	一个界面的展现，分为数据和视图，其中大部分内存为视图所占用，我们只需要保存界面数据，和离开	界面时的位置，下次创建时还原即可，不过视图的创建和释放都是比较耗性能的，会卡顿主线程。
 	
 	
 	
