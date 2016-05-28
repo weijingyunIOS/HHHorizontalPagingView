@@ -15,6 +15,8 @@
 		5CE9F30A1CF9729800DB414B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9F3081CF9729800DB414B /* LaunchScreen.storyboard */; };
 		5CE9F3151CF9729800DB414B /* DemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3141CF9729800DB414B /* DemoTests.m */; };
 		5CE9F3201CF9729800DB414B /* DemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F31F1CF9729800DB414B /* DemoUITests.m */; };
+		5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */; };
+		5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,10 @@
 		5CE9F31B1CF9729800DB414B /* DemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE9F31F1CF9729800DB414B /* DemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoUITests.m; sourceTree = "<group>"; };
 		5CE9F3211CF9729800DB414B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5CE9F3351CF9737300DB414B /* HHHorizontalPagingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHHorizontalPagingView.h; sourceTree = "<group>"; };
+		5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHHorizontalPagingView.m; sourceTree = "<group>"; };
+		5CE9F3371CF9737300DB414B /* UIView+WhenTappedBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WhenTappedBlocks.h"; sourceTree = "<group>"; };
+		5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WhenTappedBlocks.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +107,7 @@
 		5CE9F2F91CF9729800DB414B /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */,
 				5CE9F2FD1CF9729800DB414B /* AppDelegate.h */,
 				5CE9F2FE1CF9729800DB414B /* AppDelegate.m */,
 				5CE9F3001CF9729800DB414B /* ViewController.h */,
@@ -138,6 +145,18 @@
 				5CE9F3211CF9729800DB414B /* Info.plist */,
 			);
 			path = DemoUITests;
+			sourceTree = "<group>";
+		};
+		5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */ = {
+			isa = PBXGroup;
+			children = (
+				5CE9F3351CF9737300DB414B /* HHHorizontalPagingView.h */,
+				5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */,
+				5CE9F3371CF9737300DB414B /* UIView+WhenTappedBlocks.h */,
+				5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */,
+			);
+			name = HHHorizontalPagingView;
+			path = ../../HHHorizontalPagingView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -272,6 +291,8 @@
 			files = (
 				5CE9F3021CF9729800DB414B /* ViewController.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
+				5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */,
+				5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */,
 				5CE9F2FC1CF9729800DB414B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +519,7 @@
 				5CE9F3261CF9729800DB414B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5CE9F3271CF9729800DB414B /* Build configuration list for PBXNativeTarget "DemoTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +528,7 @@
 				5CE9F3291CF9729800DB414B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5CE9F32A1CF9729800DB414B /* Build configuration list for PBXNativeTarget "DemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +537,7 @@
 				5CE9F32C1CF9729800DB414B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
