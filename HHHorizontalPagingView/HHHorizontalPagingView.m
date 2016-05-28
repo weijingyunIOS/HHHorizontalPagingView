@@ -46,6 +46,7 @@ static void *HHHorizontalPagingViewInsetContext  = &HHHorizontalPagingViewInsetC
 static void *HHHorizontalPagingViewPanContext    = &HHHorizontalPagingViewPanContext;
 static NSString *pagingCellIdentifier            = @"PagingCellIdentifier";
 static NSInteger pagingButtonTag                 = 1000;
+static NSInteger pagingScrollViewTag             = 2000;
 
 #pragma mark - HHHorizontalPagingView
 - (instancetype)initWithFrame:(CGRect)frame delegate:(id<HHHorizontalPagingViewDelegate>) delegate{
@@ -81,6 +82,7 @@ static NSInteger pagingButtonTag                 = 1000;
     self.segmentBarHeight            = [self.delegate segmentHeightInPagingView:self];
     [self configureHeaderView];
     [self configureSegmentView];
+    // 防止不友好动画
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.horizontalCollectionView reloadData];
     });
@@ -132,7 +134,7 @@ static NSInteger pagingButtonTag                 = 1000;
     
     __block UIScrollView *scrollView = nil;
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.tag == 1000 + index) {
+        if (obj.tag == pagingScrollViewTag + index) {
             scrollView = obj;
             *stop = YES;
         }
@@ -141,7 +143,7 @@ static NSInteger pagingButtonTag                 = 1000;
     if (scrollView == nil) {
         scrollView = [self.delegate pagingView:self viewAtIndex:index];
         [self configureContentView:scrollView];
-        scrollView.tag = 1000 + index;
+        scrollView.tag = pagingScrollViewTag + index;
         [self.contentViewArray addObject:scrollView];
     }
     return scrollView;
@@ -286,7 +288,7 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(nullable UIEvent *)event {
-    if(point.x < 20) {
+    if(point.x < 10) {
         return NO;
     }
     return YES;
