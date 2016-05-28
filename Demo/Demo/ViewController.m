@@ -22,7 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.pagingView.segmentTopSpace = 20.;
-    self.pagingView.maxCacheCout = 5;
+    self.pagingView.maxCacheCout = 3;
     [self.pagingView reload];
 }
 
@@ -47,12 +47,35 @@
 }
 
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView{
+    
+    UIView *headerView = [[UIView alloc] init];
+    headerView.backgroundColor = [UIColor orangeColor];
+    [headerView whenTapped:^{
+        NSLog(@"1111111111");
+    }];
+    
     UIView *view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor orangeColor];
-//    [view whenTapped:^{
-//        NSLog(@"aaaaa");
-//    }];
-    return view;
+    [headerView addSubview:view];
+    view.backgroundColor = [UIColor redColor];
+    view.frame = CGRectMake(0, 0, 100, 200);
+    view.tag = 1000;
+    
+    [view whenTapped:^{
+        NSLog(@"2222222222");
+    }];
+    
+    UIView *view1 = [[UIView alloc] init];
+    [view addSubview:view1];
+    view1.tag = 1001;
+    view1.backgroundColor = [UIColor grayColor];
+    view1.frame = CGRectMake(50, 50, 50, 100);
+    
+    
+    [view1 whenTapped:^{
+        NSLog(@"3333333333");
+    }];
+    
+    return headerView;
 }
 
 //segmentButtons
