@@ -8,7 +8,8 @@
 
 	pod 'JYHHHorizontalPagingView'        
 
-我的这个是针对[Huanhoo/HHHorizontalPagingView](https://github.com/Huanhoo/HHHorizontalPagingView)的修改，HHHorizontalPagingView是一个实现上下滚动时菜单悬停在顶端，并且可以左右滑动切换的视图，实现思路非常巧妙：
+我的这个是针对[Huanhoo/HHHorizontalPagingView](https://github.com/Huanhoo/HHHorizontalPagingView)的修改，HHHorizontalPagingView是一个实现上下滚动时菜单悬停在顶
+端，并且可以左右滑动切换的视图，实现思路非常巧妙：
 	
 	HHHorizontalPagingView 通过重写 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event方法 将headerView 上的响应作用在了 self.currentScrollView (当前展现的scrollerView)上，滚动就根据contentOffset来移动headerView。点击就调用 @property (nonatomic, copy) void (^clickEventViewsBlock)(UIView *eventView); eventView 是hitTest方法查找到的view。
 	
@@ -20,7 +21,9 @@
 
 一、点击事件的处理
 	
-点击难以处理主要是，作者为了实现该效果，重写hitTest方法，导致了headerView响应者链条的断裂，虽然作者提供了一个block回调，但对于点击处理无疑是反人类。我的想法是在点击处理时将响应者链条接起来。
+点击难以处理主要是，作者为了实现该效果，重写hitTest方法，导致了headerView响应者链条的断裂，
+虽然作者提供了一个block回调，但对于点击处理无疑是反人类。我的想法是在点击处理时将响应者链条接
+起来。
 
 
 1.[响应者链条](http://www.jianshu.com/p/2c5678c659d5)可以看看该文章 以下是摘抄：
