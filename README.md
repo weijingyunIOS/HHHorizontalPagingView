@@ -38,8 +38,10 @@
 	
 2.接起响应者链条
 	
-	Huanhoo 使用@property (nonatomic, copy) void (^clickEventViewsBlock)	(UIView *eventView);来处理点击事件，而eventView就是 命中测试view ， 而我要做的
+	Huanhoo 使用@property (nonatomic, copy) void (^clickEventViewsBlock)
+	(UIView *eventView);来处理点击事件，而eventView就是 命中测试view ， 而我要做的
 	就是通过这个命中测试view向上查找处理该事件。
+
 	实现方法：
 	引入UIView+WhenTappedBlocks这是一个手势处理的分类，
 	#pragma mark - 模拟响应者链条 由被触发的View 向它的兄弟控件 父控件 延伸查找响应
