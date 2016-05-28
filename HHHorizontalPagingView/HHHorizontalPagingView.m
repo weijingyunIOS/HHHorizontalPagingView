@@ -11,7 +11,7 @@
 
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
-@property (nonatomic, weak)   UIView             *headerView;
+@property (nonatomic, strong)   UIView             *headerView;
 @property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, strong) NSMutableDictionary*contentViewDic;
 
@@ -36,6 +36,7 @@
  *  代理
  */
 @property (nonatomic, weak) id<HHHorizontalPagingViewDelegate> delegate;
+
 @end
 
 @implementation HHHorizontalPagingView
@@ -100,7 +101,7 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (void)configureHeaderView {
-    [self.headerView removeFromSuperview];
+
     if(self.headerView) {
         self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:self.headerView];
@@ -309,14 +310,6 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 #pragma mark - Setter
-- (void)setSegmentTopSpace:(CGFloat)segmentTopSpace {
-    if(segmentTopSpace > self.headerViewHeight) {
-        _segmentTopSpace = self.headerViewHeight;
-    }else {
-        _segmentTopSpace = segmentTopSpace;
-    }
-}
-
 - (void)setSegmentButtonSize:(CGSize)segmentButtonSize {
     _segmentButtonSize = segmentButtonSize;
     [self configureSegmentButtonLayout];
