@@ -29,6 +29,14 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showText:(NSString *)str{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:str delegate: self  cancelButtonTitle:nil otherButtonTitles:nil];
+    [alert show];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [alert dismissWithClickedButtonIndex:0 animated:YES];
+    });
+}
+
 #pragma mark -  HHHorizontalPagingViewDelegate
 // 下方左右滑UIScrollView设置
 - (NSInteger)numberOfSectionsInPagingView:(HHHorizontalPagingView *)pagingView{
@@ -49,10 +57,11 @@
 
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView{
     
+    __weak typeof(self)weakSelf = self;
     UIView *headerView = [[UIView alloc] init];
     headerView.backgroundColor = [UIColor orangeColor];
     [headerView whenTapped:^{
-        NSLog(@"1111111111");
+        [weakSelf showText:@"headerView click"];
     }];
     
     UIView *view = [[UIView alloc] init];
@@ -62,7 +71,7 @@
     view.tag = 1000;
     
     [view whenTapped:^{
-        NSLog(@"2222222222");
+        [weakSelf showText:@"redView click"];
     }];
     
     UIView *view1 = [[UIView alloc] init];
@@ -73,7 +82,7 @@
     
     
     [view1 whenTapped:^{
-        NSLog(@"3333333333");
+        [weakSelf showText:@"grayView click"];
     }];
     
     return headerView;
@@ -93,6 +102,7 @@
         [segmentButton setBackgroundImage:[UIImage imageNamed:@"Home_title_line_select"] forState:UIControlStateSelected];
         [segmentButton setTitle:[NSString stringWithFormat:@"view%@",@(i)] forState:UIControlStateNormal];
         [segmentButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        segmentButton.adjustsImageWhenHighlighted = NO;
         [buttonArray addObject:segmentButton];
     }
     return [buttonArray copy];
