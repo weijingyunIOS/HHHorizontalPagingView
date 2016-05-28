@@ -48,6 +48,9 @@
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView{
     UIView *view = [[UIView alloc] init];
     view.backgroundColor = [UIColor orangeColor];
+//    [view whenTapped:^{
+//        NSLog(@"aaaaa");
+//    }];
     return view;
 }
 

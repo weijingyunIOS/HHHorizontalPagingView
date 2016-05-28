@@ -6,5 +6,6 @@
 //  Copyright © 2016年 weijingyun. All rights reserved.
 //
 
-#import "UIView+WhenTappedBlocks.h"
 #import "HHHorizontalPagingView.h"
+#import "UIView+WhenTappedBlocks.h"
+

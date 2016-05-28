@@ -5,8 +5,6 @@
 //  Copyright 2011 Rubber Duck Software. All rights reserved.
 //
 
-#if NS_BLOCKS_AVAILABLE
-
 #import "UIView+WhenTappedBlocks.h"
 #import <objc/runtime.h>
 
@@ -177,5 +175,3 @@ static char kWhenTouchedUpBlockKey;
 }
 
 @end
-
-#endif

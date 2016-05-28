@@ -5,8 +5,6 @@
 //  Copyright 2011 Rubber Duck Software. All rights reserved.
 //
 
-#if NS_BLOCKS_AVAILABLE
-
 #import <UIKit/UIKit.h>
 
 typedef void (^JMWhenTappedBlock)();
@@ -21,6 +19,5 @@ typedef void (^JMWhenTappedBlock)();
 
 // 提供给画室的 head 点击响应使用
 - (void)viewWasTappedPoint:(CGPoint)point;
-@end
 
-#endif
+@end

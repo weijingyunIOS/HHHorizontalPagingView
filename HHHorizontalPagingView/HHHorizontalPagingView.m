@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong)   UIView             *headerView;
 @property (nonatomic, strong) NSArray            *segmentButtons;
-@property (nonatomic, strong) NSMutableDictionary*contentViewDic;
+@property (nonatomic, strong) NSMutableArray<UIScrollView *>*contentViewArray;
 
 @property (nonatomic, strong, readwrite) UIView  *segmentView;
 
@@ -129,14 +129,21 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (UIScrollView *)scrollViewAtIndex:(NSInteger)index{
-    NSString *key = [NSString stringWithFormat:@"scrollViewKey%tu",index];
-    UIScrollView *scrollView = self.contentViewDic[key];
-    if (scrollView != nil) {
-        return scrollView;
+    
+    __block UIScrollView *scrollView = nil;
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.tag == 1000 + index) {
+            scrollView = obj;
+            *stop = YES;
+        }
+    }];
+
+    if (scrollView == nil) {
+        scrollView = [self.delegate pagingView:self viewAtIndex:index];
+        [self configureContentView:scrollView];
+        scrollView.tag = 1000 + index;
+        [self.contentViewArray addObject:scrollView];
     }
-    scrollView = [self.delegate pagingView:self viewAtIndex:index];
-    [self configureContentView:scrollView];
-    self.contentViewDic[key] = scrollView;
     return scrollView;
 }
 
@@ -460,15 +467,22 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (void)removeCacheScrollView{
-    [self.contentViewDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, UIScrollView *obj, BOOL * _Nonnull stop) {
-        if (obj == self.currentScrollView) {
-            return;
+    if (self.contentViewArray.count <= 3) {
+        return;
+    }
+    while (self.contentViewArray.count > 3) {
+        UIScrollView *scrollView = self.contentViewArray.firstObject;
+        if (scrollView == self.currentScrollView) {
+            if (self.contentViewArray.count == 1) {
+                return;
+            }
+            scrollView = self.contentViewArray.lastObject;
         }
-        [obj removeFromSuperview];
-        [[self viewControllerForView:obj] removeFromParentViewController];
-        [self removeObserverFor:obj];
-        [self.contentViewDic removeObjectForKey:key];
-    }];
+        [self removeObserverFor:scrollView];
+        [scrollView removeFromSuperview];
+        [[self viewControllerForView:scrollView] removeFromParentViewController];
+        [self.contentViewArray removeObject:scrollView];
+    }
 }
 
 - (UIViewController *)viewControllerForView:(UIView *)view {
@@ -482,9 +496,8 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (void)dealloc {
-    [self.contentViewDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        UIScrollView *scrollView = self.contentViewDic[key];
-        [self removeObserverFor:scrollView];
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self removeObserverFor:obj];
     }];
 }
 
@@ -502,11 +515,11 @@ static NSInteger pagingButtonTag                 = 1000;
     return _segmentButtonConstraintArray;
 }
 
-- (NSMutableDictionary *)contentViewDic{
-    if (!_contentViewDic) {
-        _contentViewDic = [[NSMutableDictionary alloc] init];
+- (NSMutableArray<UIScrollView *> *)contentViewArray{
+    if (!_contentViewArray) {
+        _contentViewArray = [[NSMutableArray alloc] init];
     }
-    return _contentViewDic;
+    return _contentViewArray;
 }
 
 @end
