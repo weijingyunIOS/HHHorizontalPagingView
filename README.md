@@ -2,6 +2,11 @@
 对HHHorizontalPagingView的优化，解决headerView 的点击痛点
 
 ![演示](http://imgdata.hoop8.com/1605/0341929188787.gif)
+#CocoaPods
+
+通过CocoaPods集成
+
+	pod 'JYHHHorizontalPagingView'        
 
 我的这个是针对[Huanhoo/HHHorizontalPagingView](https://github.com/Huanhoo/HHHorizontalPagingView)的修改，HHHorizontalPagingView是一个实现上下滚动时菜单悬停在顶端，并且可以左右滑动切换的视图，实现思路非常巧妙：
 	
