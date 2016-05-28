@@ -43,6 +43,12 @@
 @property (nonatomic, assign) CGFloat segmentTopSpace;
 
 /**
+ *  缓存视图数 默认是 3
+ */
+@property (nonatomic, assign) CGFloat maxCacheCout;
+
+
+/**
  *  自定义segmentButton的size
  */
 @property (nonatomic, assign) CGSize segmentButtonSize;

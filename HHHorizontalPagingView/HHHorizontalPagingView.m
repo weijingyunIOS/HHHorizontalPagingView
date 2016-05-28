@@ -467,10 +467,10 @@ static NSInteger pagingButtonTag                 = 1000;
 }
 
 - (void)removeCacheScrollView{
-    if (self.contentViewArray.count <= 3) {
+    if (self.contentViewArray.count <= self.maxCacheCout) {
         return;
     }
-    while (self.contentViewArray.count > 3) {
+    while (self.contentViewArray.count > self.maxCacheCout) {
         UIScrollView *scrollView = self.contentViewArray.firstObject;
         if (scrollView == self.currentScrollView) {
             if (self.contentViewArray.count == 1) {
@@ -520,6 +520,13 @@ static NSInteger pagingButtonTag                 = 1000;
         _contentViewArray = [[NSMutableArray alloc] init];
     }
     return _contentViewArray;
+}
+
+- (CGFloat)maxCacheCout{
+    if (_maxCacheCout == 0) {
+        _maxCacheCout = 3;
+    }
+    return _maxCacheCout;
 }
 
 @end

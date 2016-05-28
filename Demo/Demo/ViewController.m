@@ -22,6 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.pagingView.segmentTopSpace = 20.;
+    self.pagingView.maxCacheCout = 5;
     [self.pagingView reload];
 }
 
