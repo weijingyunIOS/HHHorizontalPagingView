@@ -17,7 +17,7 @@
 		5CE9F3201CF9729800DB414B /* DemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F31F1CF9729800DB414B /* DemoUITests.m */; };
 		5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */; };
 		5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */; };
-		5CE9F33E1CF9788A00DB414B /* HHContentTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F33D1CF9788A00DB414B /* HHContentTableView.m */; };
+		5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,8 +59,8 @@
 		5CE9F3371CF9737300DB414B /* UIView+WhenTappedBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WhenTappedBlocks.h"; sourceTree = "<group>"; };
 		5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WhenTappedBlocks.m"; sourceTree = "<group>"; };
 		5CE9F33B1CF9740B00DB414B /* JYPagingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JYPagingView.h; sourceTree = "<group>"; };
-		5CE9F33C1CF9788A00DB414B /* HHContentTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHContentTableView.h; sourceTree = "<group>"; };
-		5CE9F33D1CF9788A00DB414B /* HHContentTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHContentTableView.m; sourceTree = "<group>"; };
+		5CE9F3451CF9A71800DB414B /* ArtTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtTableViewController.h; sourceTree = "<group>"; };
+		5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +116,8 @@
 				5CE9F2FE1CF9729800DB414B /* AppDelegate.m */,
 				5CE9F3001CF9729800DB414B /* ViewController.h */,
 				5CE9F3011CF9729800DB414B /* ViewController.m */,
-				5CE9F33C1CF9788A00DB414B /* HHContentTableView.h */,
-				5CE9F33D1CF9788A00DB414B /* HHContentTableView.m */,
+				5CE9F3451CF9A71800DB414B /* ArtTableViewController.h */,
+				5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */,
 				5CE9F3031CF9729800DB414B /* Main.storyboard */,
 				5CE9F3061CF9729800DB414B /* Assets.xcassets */,
 				5CE9F3081CF9729800DB414B /* LaunchScreen.storyboard */,
@@ -297,7 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE9F3021CF9729800DB414B /* ViewController.m in Sources */,
-				5CE9F33E1CF9788A00DB414B /* HHContentTableView.m in Sources */,
+				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
 				5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */,
 				5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */,

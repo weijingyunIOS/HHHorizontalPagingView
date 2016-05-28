@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "JYPagingView.h"
-#import "HHContentTableView.h"
+#import "ArtTableViewController.h"
 
 @interface ViewController ()<HHHorizontalPagingViewDelegate>
 
@@ -21,8 +21,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.pagingView.segmentTopSpace = 20.;
-    self.pagingView.maxCacheCout = 3;
     [self.pagingView reload];
 }
 
@@ -38,12 +36,15 @@
 }
 
 - (UIScrollView *)pagingView:(HHHorizontalPagingView *)pagingView viewAtIndex:(NSInteger)index{
-    return [HHContentTableView contentTableViewIndex:index];
+    ArtTableViewController *vc = [[ArtTableViewController alloc] init];
+    [self addChildViewController:vc];
+    vc.index = index;
+    return (UIScrollView *)vc.view;
 }
 
 //headerView 设置
 - (CGFloat)headerHeightInPagingView:(HHHorizontalPagingView *)pagingView{
-    return 350;
+    return 250;
 }
 
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView{
@@ -80,7 +81,7 @@
 
 //segmentButtons
 - (CGFloat)segmentHeightInPagingView:(HHHorizontalPagingView *)pagingView{
-    return 44;
+    return 36.;
 }
 
 - (NSArray<UIButton*> *)segmentButtonsInPagingView:(HHHorizontalPagingView *)pagingView{
@@ -116,6 +117,9 @@
     if (!_pagingView) {
         CGSize size = [UIScreen mainScreen].bounds.size;
         _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
+        _pagingView.segmentTopSpace = 20;
+        _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
+//        _pagingView.maxCacheCout = 5.;
         [self.view addSubview:_pagingView];
     }
     return _pagingView;
