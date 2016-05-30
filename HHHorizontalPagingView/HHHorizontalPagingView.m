@@ -70,6 +70,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self addSubview:self.horizontalCollectionView];
         [self configureHeaderView];
         [self configureSegmentView];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(releaseCache) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 
     }
     return self;
@@ -103,7 +104,6 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)configureHeaderView {
-    
     [self.headerView removeFromSuperview];
     if(self.headerView) {
         self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -481,11 +481,23 @@ static NSInteger pagingScrollViewTag             = 2000;
             }
             scrollView = self.contentViewArray.lastObject;
         }
-        [self removeObserverFor:scrollView];
-        [scrollView removeFromSuperview];
-        [[self viewControllerForView:scrollView] removeFromParentViewController];
-        [self.contentViewArray removeObject:scrollView];
+        [self removeScrollView:scrollView];
     }
+}
+
+- (void)releaseCache{
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj != self.currentScrollView) {
+            [self removeScrollView:obj];
+        }
+    }];
+}
+
+- (void)removeScrollView:(UIScrollView *)scrollView{
+    [self removeObserverFor:scrollView];
+    [scrollView removeFromSuperview];
+    [[self viewControllerForView:scrollView] removeFromParentViewController];
+    [self.contentViewArray removeObject:scrollView];
 }
 
 - (UIViewController *)viewControllerForView:(UIView *)view {
@@ -502,6 +514,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [self removeObserverFor:obj];
     }];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)removeObserverFor:(UIScrollView *)scrollView{
