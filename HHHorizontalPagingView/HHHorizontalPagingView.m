@@ -103,7 +103,8 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)configureHeaderView {
-
+    
+    [self.headerView removeFromSuperview];
     if(self.headerView) {
         self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:self.headerView];
