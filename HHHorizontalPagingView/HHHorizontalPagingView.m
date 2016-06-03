@@ -9,9 +9,24 @@
 #import "HHHorizontalPagingView.h"
 #import "UIView+WhenTappedBlocks.h"
 
+@interface DynamicItem : NSObject<UIDynamicItem>
+@property (nonatomic, readwrite) CGPoint center;
+@property (nonatomic, readonly) CGRect bounds;
+@property (nonatomic, readwrite) CGAffineTransform transform;
+@end
+
+@implementation DynamicItem
+- (instancetype)init {
+    if (self = [super init]) {
+        _bounds = CGRectMake(0, 0, 1, 1);
+    }
+    return self;
+}
+@end
+
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
-@property (nonatomic, strong)   UIView             *headerView;
+@property (nonatomic, strong) UIView             *headerView;
 @property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, strong) NSMutableArray<UIScrollView *>*contentViewArray;
 
@@ -31,6 +46,9 @@
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
+
+@property (nonatomic, strong) UIDynamicAnimator  *animator;
+@property (nonatomic, strong) UIDynamicItemBehavior *inertialBehavior;
 
 /**
  *  代理
@@ -114,8 +132,57 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self addConstraint:self.headerOriginYConstraint];
         
         self.headerSizeHeightConstraint = [NSLayoutConstraint constraintWithItem:self.headerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:self.headerViewHeight];
+        
+        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+        [self.headerView addGestureRecognizer:pan];
         [self.headerView addConstraint:self.headerSizeHeightConstraint];
     }
+}
+
+- (void)pan:(UIPanGestureRecognizer*)pan{
+    
+    CGPoint point = [pan translationInView:self.headerView ] ;
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - point.y);
+    // 清零防止偏移累计
+    [pan setTranslation:CGPointZero inView:self.headerView];
+    
+    if (pan.state == UIGestureRecognizerStateEnded) {
+        
+        CGFloat velocity = [pan velocityInView:self.headerView].y;
+        [self deceleratingAnimator:velocity];
+    }
+}
+
+- (void)deceleratingAnimator:(CGFloat)velocity{
+    
+    // when pan.state == UIGestureRecognizerStateEnded
+    DynamicItem *item = [[DynamicItem alloc] init];
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    item.center = CGPointMake(0, 0);
+    // velocity是在手势结束的时候获取的竖直方向的手势速度
+    UIDynamicItemBehavior *inertialBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[ item ]];
+    [inertialBehavior addLinearVelocity:CGPointMake(0, velocity) forItem:item];
+    // 通过尝试取2.0比较像系统的效果
+    inertialBehavior.resistance = 2.0;
+    inertialBehavior.action = ^{
+        
+        if (self.currentScrollView.contentOffset.y <= - self.headerViewHeight) {
+            [self.animator removeBehavior:self.inertialBehavior];
+            return;
+        }
+        CGFloat pointy = item.center.y;
+        self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - pointy);
+    };
+    self.inertialBehavior = inertialBehavior;
+    [self.animator addBehavior:inertialBehavior];
+}
+
+- (UIDynamicAnimator *)animator{
+    if (!_animator) {
+        _animator = [[UIDynamicAnimator alloc] init];
+    }
+    return _animator;
 }
 
 - (void)configureSegmentView {
@@ -289,35 +356,40 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(nullable UIEvent *)event {
+    
+    if (self.inertialBehavior) {
+        [self.animator removeBehavior:self.inertialBehavior];
+    }
+    
     if(point.x < 10) {
         return NO;
     }
     return YES;
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    UIView *view = [super hitTest:point withEvent:event];
-    if ([view isDescendantOfView:self.headerView] || [view isDescendantOfView:self.segmentView]) {
-        self.horizontalCollectionView.scrollEnabled = NO;
-        
-        self.currentTouchView = nil;
-        self.currentTouchButton = nil;
-        
-        [self.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if(obj == view) {
-                self.currentTouchButton = obj;
-            }
-        }];
-        if(!self.currentTouchButton) {
-            self.currentTouchView = view;
-            self.currentTouchViewPoint = [self convertPoint:point toView:self.currentTouchView];
-        }else {
-            return view;
-        }
-        return self.currentScrollView;
-    }
-    return view;
-}
+//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+//    UIView *view = [super hitTest:point withEvent:event];
+//    if ([view isDescendantOfView:self.headerView] || [view isDescendantOfView:self.segmentView]) {
+//        self.horizontalCollectionView.scrollEnabled = NO;
+//        
+//        self.currentTouchView = nil;
+//        self.currentTouchButton = nil;
+//        
+//        [self.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//            if(obj == view) {
+//                self.currentTouchButton = obj;
+//            }
+//        }];
+//        if(!self.currentTouchButton) {
+//            self.currentTouchView = view;
+//            self.currentTouchViewPoint = [self convertPoint:point toView:self.currentTouchView];
+//        }else {
+//            return view;
+//        }
+//        return self.currentScrollView;
+//    }
+//    return view;
+//}
 
 #pragma mark - Setter
 - (void)setSegmentButtonSize:(CGSize)segmentButtonSize {
