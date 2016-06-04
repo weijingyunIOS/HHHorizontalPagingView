@@ -132,47 +132,68 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self addConstraint:self.headerOriginYConstraint];
         
         self.headerSizeHeightConstraint = [NSLayoutConstraint constraintWithItem:self.headerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:self.headerViewHeight];
-        
+        [self.headerView addConstraint:self.headerSizeHeightConstraint];
         UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
         [self.headerView addGestureRecognizer:pan];
-        [self.headerView addConstraint:self.headerSizeHeightConstraint];
     }
 }
 
 - (void)pan:(UIPanGestureRecognizer*)pan{
     
     CGPoint point = [pan translationInView:self.headerView ] ;
-    CGPoint contentOffset = self.currentScrollView.contentOffset;
-    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - point.y);
+    [self rollingPointy:point.y];
+
+    if (pan.state == UIGestureRecognizerStateEnded) {
+        CGFloat velocity = [pan velocityInView:self.headerView].y;
+        [self deceleratingAnimator:velocity];
+        NSLog(@"--%f",velocity);
+    }
+    
     // 清零防止偏移累计
     [pan setTranslation:CGPointZero inView:self.headerView];
     
-    if (pan.state == UIGestureRecognizerStateEnded) {
+}
+
+- (void)rollingPointy:(CGFloat)pointy{
+    
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
+    CGFloat maxsetH = self.currentScrollView.contentSize.height - self.frame.size.height;
+    CGFloat offsety = contentOffset.y - pointy;
+    if (offsety < border) {
+        NSLog(@"%f",pointy);
+        if (pointy <= 5) {
+            offsety = contentOffset.y - 0.3;
+        }else{
+            [self.animator removeBehavior:self.inertialBehavior];
+            [UIView animateWithDuration:2 animations:^{
+                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, -286);
+            }];
+        }
         
-        CGFloat velocity = [pan velocityInView:self.headerView].y;
-        [self deceleratingAnimator:velocity];
+    }else if (offsety >= maxsetH) {
+        offsety = maxsetH;
+        [self.animator removeBehavior:self.inertialBehavior];
     }
+    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
 }
 
 - (void)deceleratingAnimator:(CGFloat)velocity{
     
+    velocity = velocity * 0.05;
     // when pan.state == UIGestureRecognizerStateEnded
     DynamicItem *item = [[DynamicItem alloc] init];
-    CGPoint contentOffset = self.currentScrollView.contentOffset;
     item.center = CGPointMake(0, 0);
     // velocity是在手势结束的时候获取的竖直方向的手势速度
     UIDynamicItemBehavior *inertialBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[ item ]];
     [inertialBehavior addLinearVelocity:CGPointMake(0, velocity) forItem:item];
     // 通过尝试取2.0比较像系统的效果
-    inertialBehavior.resistance = 2.0;
+    inertialBehavior.resistance = fabs(0.12 * velocity);
+    inertialBehavior.angularResistance = fabs(0.05 * inertialBehavior.resistance);
     inertialBehavior.action = ^{
         
-        if (self.currentScrollView.contentOffset.y <= - self.headerViewHeight) {
-            [self.animator removeBehavior:self.inertialBehavior];
-            return;
-        }
         CGFloat pointy = item.center.y;
-        self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - pointy);
+        [self rollingPointy:pointy];
     };
     self.inertialBehavior = inertialBehavior;
     [self.animator addBehavior:inertialBehavior];
