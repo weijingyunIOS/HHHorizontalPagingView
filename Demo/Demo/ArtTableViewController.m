@@ -48,17 +48,17 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
-    return self.index % 2 ? 20 : 2;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return 2;
+    return self.index % 2 ? 50 : 2;
     
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 60.f;
+    return 80.f;
     
 }
 
@@ -67,12 +67,13 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 20;
+    return 0.0001;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    // 通过最后一个 Footer 来补高度
     if (section == [self numberOfSectionsInTableView:tableView] - 1) {
-        return [self automaticHeight];
+        return [self automaticHeightForTableView:tableView];
     }
     return 0.0001;
 }
@@ -83,43 +84,44 @@
     return view;
 }
 
-- (CGFloat)automaticHeight{
+- (CGFloat)automaticHeightForTableView:(UITableView *)tableView{
     
     CGFloat height = 0.;
-    NSInteger section = [self.tableView.dataSource numberOfSectionsInTableView:self.tableView];
+    NSInteger section = [tableView.dataSource numberOfSectionsInTableView:tableView];
     for (int i = 0; i < section; i ++) {
         
-        if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForHeaderInSection:)]) {
-            height += [self.tableView.delegate tableView:self.tableView heightForHeaderInSection:section];
+        if ([tableView.delegate respondsToSelector:@selector(tableView:heightForHeaderInSection:)]) {
+            height += [tableView.delegate tableView:tableView heightForHeaderInSection:section];
         }
         
-        NSInteger row = [self.tableView.dataSource tableView:self.tableView numberOfRowsInSection:section];
+        NSInteger row = [tableView.dataSource tableView:tableView numberOfRowsInSection:section];
         for (int j= 0 ; j < row; j++) {
             
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:j inSection:i];
-            if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
-                height += [self.tableView.delegate tableView:self.tableView heightForRowAtIndexPath:indexPath];
+            if ([tableView.delegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
+                height += [tableView.delegate tableView:tableView heightForRowAtIndexPath:indexPath];
             }
             
-            if (height >= self.tableView.frame.size.height) {
+            if (height >= tableView.frame.size.height) {
                 return 0.0001;
             }
         }
         
         if (i != section - 1) {
             
-            if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForFooterInSection:)]) {
-                height += [self.tableView.delegate tableView:self.tableView heightForFooterInSection:section];
+            if ([tableView.delegate respondsToSelector:@selector(tableView:heightForFooterInSection:)]) {
+                height += [tableView.delegate tableView:tableView heightForFooterInSection:section];
             }
         }
         
     }
     
-    if (height >= self.tableView.frame.size.height) {
+    if (height >= tableView.frame.size.height) {
         return 0.0001;
     }
     
-    return self.tableView.frame.size.height - height - 36;
+    // 36 是 segmentButtons 的高度 20 是segmentTopSpace的高度
+    return tableView.frame.size.height - height - 36.f - 20.f;
 }
 
 @end
