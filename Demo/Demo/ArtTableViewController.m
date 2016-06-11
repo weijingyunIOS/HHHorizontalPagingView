@@ -86,7 +86,9 @@
 
 - (CGFloat)automaticHeightForTableView:(UITableView *)tableView{
     
-    CGFloat height = 0.;
+      // 36 是 segmentButtons 的高度 20 是segmentTopSpace的高度
+    CGFloat height = 36.f + 20.f;
+    
     NSInteger section = [tableView.dataSource numberOfSectionsInTableView:tableView];
     for (int i = 0; i < section; i ++) {
         
@@ -120,8 +122,7 @@
         return 0.0001;
     }
     
-    // 36 是 segmentButtons 的高度 20 是segmentTopSpace的高度
-    return tableView.frame.size.height - height - 36.f - 20.f;
+    return tableView.frame.size.height - height;
 }
 
 @end
