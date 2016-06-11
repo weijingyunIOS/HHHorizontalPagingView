@@ -48,12 +48,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
-    return 20;
+    return self.index % 2 ? 20 : 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return 10;
+    return 2;
     
 }
 
@@ -71,7 +71,55 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 0.001;
+    if (section == [self numberOfSectionsInTableView:tableView] - 1) {
+        return [self automaticHeight];
+    }
+    return 0.0001;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor = [UIColor redColor];
+    return view;
+}
+
+- (CGFloat)automaticHeight{
+    
+    CGFloat height = 0.;
+    NSInteger section = [self.tableView.dataSource numberOfSectionsInTableView:self.tableView];
+    for (int i = 0; i < section; i ++) {
+        
+        if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForHeaderInSection:)]) {
+            height += [self.tableView.delegate tableView:self.tableView heightForHeaderInSection:section];
+        }
+        
+        NSInteger row = [self.tableView.dataSource tableView:self.tableView numberOfRowsInSection:section];
+        for (int j= 0 ; j < row; j++) {
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:j inSection:i];
+            if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
+                height += [self.tableView.delegate tableView:self.tableView heightForRowAtIndexPath:indexPath];
+            }
+            
+            if (height >= self.tableView.frame.size.height) {
+                return 0.0001;
+            }
+        }
+        
+        if (i != section - 1) {
+            
+            if ([self.tableView.delegate respondsToSelector:@selector(tableView:heightForFooterInSection:)]) {
+                height += [self.tableView.delegate tableView:self.tableView heightForFooterInSection:section];
+            }
+        }
+        
+    }
+    
+    if (height >= self.tableView.frame.size.height) {
+        return 0.0001;
+    }
+    
+    return self.tableView.frame.size.height - height - 36;
 }
 
 @end
