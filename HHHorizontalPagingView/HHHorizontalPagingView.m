@@ -9,9 +9,11 @@
 #import "HHHorizontalPagingView.h"
 #import "UIView+WhenTappedBlocks.h"
 
+#define HHHiOS10 ([[[UIDevice currentDevice] systemVersion] doubleValue]>=10.0)?YES:NO
+
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
-@property (nonatomic, strong)   UIView             *headerView;
+@property (nonatomic, strong) UIView             *headerView;
 @property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, strong) NSMutableArray<UIScrollView *>*contentViewArray;
 
@@ -266,22 +268,22 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
 }
 
-- (void)adjustContentViewOffset {
+- (void)adjustOffsetContentView:(UIScrollView *)scrollView {
     self.isSwitching = YES;
     CGFloat headerViewDisplayHeight = self.headerViewHeight + self.headerView.frame.origin.y;
-    [self.currentScrollView layoutIfNeeded];
+    [scrollView layoutIfNeeded];
     
     if (headerViewDisplayHeight != self.segmentTopSpace) {// 还原位置
-        [self.currentScrollView setContentOffset:CGPointMake(0, -headerViewDisplayHeight - self.segmentBarHeight)];
-    }else if(self.currentScrollView.contentOffset.y < -self.segmentBarHeight) {
-        [self.currentScrollView setContentOffset:CGPointMake(0, -headerViewDisplayHeight-self.segmentBarHeight)];
+        [scrollView setContentOffset:CGPointMake(0, -headerViewDisplayHeight - self.segmentBarHeight)];
+    }else if(scrollView.contentOffset.y < -self.segmentBarHeight) {
+        [scrollView setContentOffset:CGPointMake(0, -headerViewDisplayHeight-self.segmentBarHeight)];
     }else {
         // self.segmentTopSpace
-        [self.currentScrollView setContentOffset:CGPointMake(0, self.currentScrollView.contentOffset.y-headerViewDisplayHeight + self.segmentTopSpace)];
+        [scrollView setContentOffset:CGPointMake(0, scrollView.contentOffset.y-headerViewDisplayHeight + self.segmentTopSpace)];
     }
     
-    if ([self.currentScrollView.delegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
-        [self.currentScrollView.delegate scrollViewDidEndDragging:self.currentScrollView willDecelerate:NO];
+    if ([scrollView.delegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
+        [scrollView.delegate scrollViewDidEndDragging:scrollView willDecelerate:NO];
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0)), dispatch_get_main_queue(), ^{
         self.isSwitching = NO;
@@ -297,6 +299,10 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     UIView *view = [super hitTest:point withEvent:event];
+//    BUG -[__NSCFType isDescendantOfView:]: unrecognized selector sent to instance 0x9dd30e0
+    if (![view isKindOfClass:[UIView class]]) {
+        return nil;
+    }
     if ([view isDescendantOfView:self.headerView] || [view isDescendantOfView:self.segmentView]) {
         self.horizontalCollectionView.scrollEnabled = NO;
         
@@ -339,7 +345,9 @@ static NSInteger pagingScrollViewTag             = 2000;
         [v removeFromSuperview];
     }
     UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
-    [cell.contentView addSubview:v];
+    UIViewController *vc = [self viewControllerForView:v];
+    [cell.contentView addSubview:vc.view];
+    
     CGFloat scrollViewHeight = v.frame.size.height;
     v.translatesAutoresizingMaskIntoConstraints = NO;
     [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
@@ -347,7 +355,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:scrollViewHeight == 0 ? 0 : -(cell.contentView.frame.size.height-v.frame.size.height)]];
     [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     self.currentScrollView = v;
-    [self adjustContentViewOffset];
+    [cell layoutIfNeeded];
+    [self adjustOffsetContentView:v];
     return cell;
     
 }
@@ -439,33 +448,51 @@ static NSInteger pagingScrollViewTag             = 2000;
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGFloat page = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
-    NSInteger currentPage = page / 1;
-    if (page - currentPage > 0.5) {
+    if (HHHiOS10) {
+        // - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+        // 该方法触发在 iOS10 以前是一滑动就触发，现在不是，导致iOS10 下出现 adjustOffsetContentView 中设置ContentOffset无效，故在此回调处理下，也就是在 scrollView显示之前 就设置好ContentOffset。
+        [self scrollViewDidOffsetPage:page];
+    }
+    NSInteger selectePage = page / 1;
+    if (page - selectePage > 0.5) {
         return;
     }
-    
-    for(UIButton *b in self.segmentButtons) {
-        if(b.tag - pagingButtonTag == currentPage) {
-            [b setSelected:YES];
-        }else {
-            [b setSelected:NO];
-        }
-    }
+    [self setSelectedButPage:selectePage];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     CGFloat currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
-    for(UIButton *b in self.segmentButtons) {
-        if(b.tag - pagingButtonTag == currentPage) {
-            [b setSelected:YES];
-        }else {
-            [b setSelected:NO];
-        }
-    }
+    [self setSelectedButPage:currentPage];
     self.currentScrollView = [self scrollViewAtIndex:currentPage];
     [self removeCacheScrollView];
     if(self.pagingViewSwitchBlock) {
         self.pagingViewSwitchBlock(currentPage);
+    }
+}
+
+// 计算偏移的scrollView 处理
+- (void)scrollViewDidOffsetPage:(CGFloat)offsetpage{
+    NSInteger currentPage = [self.contentViewArray indexOfObject:self.currentScrollView];
+    NSInteger page;
+    if (offsetpage - currentPage > 0) {
+        page = currentPage + 1;
+    }else{
+        page = currentPage - 1;
+    }
+    
+    if (self.contentViewArray.count > page && page >= 0) {
+        [self adjustOffsetContentView:self.contentViewArray[page]];
+    }
+}
+
+
+- (void)setSelectedButPage:(NSInteger)buttonPage{
+    for(UIButton *b in self.segmentButtons) {
+        if(b.tag - pagingButtonTag == buttonPage) {
+            [b setSelected:YES];
+        }else {
+            [b setSelected:NO];
+        }
     }
 }
 
@@ -510,6 +537,12 @@ static NSInteger pagingScrollViewTag             = 2000;
     return nil;
 }
 
+- (void)removeObserverFor:(UIScrollView *)scrollView{
+    [scrollView.panGestureRecognizer removeObserver:self forKeyPath:NSStringFromSelector(@selector(state)) context:&HHHorizontalPagingViewPanContext];
+    [scrollView removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentOffset)) context:&HHHorizontalPagingViewScrollContext];
+    [scrollView removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentInset)) context:&HHHorizontalPagingViewInsetContext];
+}
+
 - (void)dealloc {
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [self removeObserverFor:obj];
@@ -517,11 +550,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)removeObserverFor:(UIScrollView *)scrollView{
-    [scrollView.panGestureRecognizer removeObserver:self forKeyPath:NSStringFromSelector(@selector(state)) context:&HHHorizontalPagingViewPanContext];
-    [scrollView removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentOffset)) context:&HHHorizontalPagingViewScrollContext];
-    [scrollView removeObserver:self forKeyPath:NSStringFromSelector(@selector(contentInset)) context:&HHHorizontalPagingViewInsetContext];
-}
 
 #pragma mark - 懒加载
 - (NSMutableArray *)segmentButtonConstraintArray{

@@ -93,10 +93,10 @@
     for (int i = 0; i < section; i ++) {
         
         if ([tableView.delegate respondsToSelector:@selector(tableView:heightForHeaderInSection:)]) {
-            height += [tableView.delegate tableView:tableView heightForHeaderInSection:section];
+            height += [tableView.delegate tableView:tableView heightForHeaderInSection:i];
         }
         
-        NSInteger row = [tableView.dataSource tableView:tableView numberOfRowsInSection:section];
+        NSInteger row = [tableView.dataSource tableView:tableView numberOfRowsInSection:i];
         for (int j= 0 ; j < row; j++) {
             
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:j inSection:i];
@@ -112,7 +112,7 @@
         if (i != section - 1) {
             
             if ([tableView.delegate respondsToSelector:@selector(tableView:heightForFooterInSection:)]) {
-                height += [tableView.delegate tableView:tableView heightForFooterInSection:section];
+                height += [tableView.delegate tableView:tableView heightForFooterInSection:i];
             }
         }
         
