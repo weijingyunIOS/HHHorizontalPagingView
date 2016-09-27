@@ -100,6 +100,7 @@
  */
 - (UIScrollView *)scrollViewAtIndex:(NSInteger)index;
 
+// 进行页面刷新
 - (void)reload;
 
 // 清除视图缓存，接收到内存警告也会执行
