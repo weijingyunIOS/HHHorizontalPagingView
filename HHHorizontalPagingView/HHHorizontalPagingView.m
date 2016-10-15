@@ -31,6 +31,7 @@
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
+@property (nonatomic, assign) NSInteger          currenPage; // 当前页
 
 /**
  *  代理
@@ -204,6 +205,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             
             if(i == 0) {
                 [segmentButton setSelected:YES];
+                self.currenPage = 0;
             }
             
             segmentButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -257,7 +259,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         [b setSelected:NO];
     }
     [segmentButton setSelected:YES];
-    
+    self.currenPage = segmentButton.tag - pagingButtonTag;
    
     
     [self.horizontalCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:clickIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
@@ -473,21 +475,24 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGFloat page = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
- 
-//    NSInteger currentPage = [self.contentViewArray indexOfObject:self.currentScrollView];
-//    NSInteger page;
-//    if (offsetpage - currentPage > 0) {
-//        page = currentPage + 1;
-//    }else{
-//        page = currentPage - 1;
-//    }
 
-    NSInteger selectePage = page / 1;
-    if (page - selectePage > 0.5) {
+    CGFloat offsetpage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
+    CGFloat py = fabs((int)offsetpage - offsetpage);
+    if ( py <= 0.3 || py >= 0.7) {
         return;
     }
-    [self setSelectedButPage:selectePage];
+    
+    NSInteger currentPage = self.currenPage;
+    if (offsetpage - currentPage > 0) {
+        if (py > 0.55) {
+           [self setSelectedButPage:currentPage + 1];
+        }
+    }else{
+        if (py < 0.45) {
+            [self setSelectedButPage:currentPage - 1];
+        }
+    }
+
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -508,6 +513,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             [b setSelected:NO];
         }
     }
+    self.currenPage = buttonPage;
 }
 
 - (void)removeCacheScrollView{
