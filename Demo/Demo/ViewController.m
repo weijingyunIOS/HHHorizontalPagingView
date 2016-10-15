@@ -13,6 +13,7 @@
 @interface ViewController ()<HHHorizontalPagingViewDelegate>
 
 @property (nonatomic, strong) HHHorizontalPagingView *pagingView;
+@property (nonatomic, strong) NSLayoutConstraint *topConstraint;
 
 @end
 
@@ -20,7 +21,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
     [self.pagingView reload];
 }
 
@@ -59,6 +59,19 @@
     
     __weak typeof(self)weakSelf = self;
     UIView *headerView = [[UIView alloc] init];
+    UIImage *image = [UIImage imageNamed:@"headerImage"];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
+    [headerView addSubview:imageView];
+    
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.topConstraint = [NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    [headerView addConstraint:self.topConstraint];
+    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    
     headerView.backgroundColor = [UIColor orangeColor];
     [headerView whenTapped:^{
         [weakSelf showText:@"headerView click"];
@@ -129,7 +142,8 @@
  
  */
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset{
-    NSLog(@"偏移%f",offset);
+//    NSLog(@"偏移%f",offset);
+    self.topConstraint.constant = offset;
 }
 
 #pragma mark - 懒加载
