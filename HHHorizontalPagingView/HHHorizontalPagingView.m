@@ -9,8 +9,6 @@
 #import "HHHorizontalPagingView.h"
 #import "UIView+WhenTappedBlocks.h"
 
-#define HHHiOS10 ([[[UIDevice currentDevice] systemVersion] doubleValue]>=10.0)?YES:NO
-
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UIView             *headerView;
@@ -67,6 +65,12 @@ static NSInteger pagingScrollViewTag             = 2000;
         self.horizontalCollectionView.pagingEnabled                  = YES;
         self.horizontalCollectionView.showsHorizontalScrollIndicator = NO;
         self.horizontalCollectionView.scrollsToTop                   = NO;
+        
+        // iOS10 上将该属性设置为 NO，就会预取cell了
+        if([self.horizontalCollectionView respondsToSelector:@selector(setPrefetchingEnabled:)]) {
+            self.horizontalCollectionView.prefetchingEnabled = NO;
+        }
+        
         UICollectionViewFlowLayout *tempLayout = (id)self.horizontalCollectionView.collectionViewLayout;
         tempLayout.itemSize = self.horizontalCollectionView.frame.size;
         [self addSubview:self.horizontalCollectionView];
@@ -257,7 +261,6 @@ static NSInteger pagingScrollViewTag             = 2000;
    
     
     [self.horizontalCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:clickIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-    [self.horizontalCollectionView reloadData];
     
     if(self.currentScrollView.contentOffset.y<-(self.headerViewHeight+self.segmentBarHeight)) {
         [self.currentScrollView setContentOffset:CGPointMake(self.currentScrollView.contentOffset.x, -(self.headerViewHeight+self.segmentBarHeight)) animated:NO];
@@ -471,11 +474,15 @@ static NSInteger pagingScrollViewTag             = 2000;
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGFloat page = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
-    if (HHHiOS10) {
-        // - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
-        // 该方法触发在 iOS10 以前是一滑动就触发，现在不是，导致iOS10 下出现 adjustOffsetContentView 中设置ContentOffset无效，故在此回调处理下，也就是在 scrollView显示之前 就设置好ContentOffset。
-        [self scrollViewDidOffsetPage:page];
-    }
+ 
+//    NSInteger currentPage = [self.contentViewArray indexOfObject:self.currentScrollView];
+//    NSInteger page;
+//    if (offsetpage - currentPage > 0) {
+//        page = currentPage + 1;
+//    }else{
+//        page = currentPage - 1;
+//    }
+
     NSInteger selectePage = page / 1;
     if (page - selectePage > 0.5) {
         return;
@@ -492,22 +499,6 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self.delegate pagingView:self didiSwitchAtIndex:currentPage];
     }
 }
-
-// 计算偏移的scrollView 处理
-- (void)scrollViewDidOffsetPage:(CGFloat)offsetpage{
-    NSInteger currentPage = [self.contentViewArray indexOfObject:self.currentScrollView];
-    NSInteger page;
-    if (offsetpage - currentPage > 0) {
-        page = currentPage + 1;
-    }else{
-        page = currentPage - 1;
-    }
-    
-    if (self.contentViewArray.count > page && page >= 0) {
-        [self adjustOffsetContentView:self.contentViewArray[page]];
-    }
-}
-
 
 - (void)setSelectedButPage:(NSInteger)buttonPage{
     for(UIButton *b in self.segmentButtons) {
