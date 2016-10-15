@@ -117,6 +117,21 @@
     NSLog(@"%s",__func__);
 }
 
+// 视图切换完成时调用
+- (void)pagingView:(HHHorizontalPagingView*)pagingView didiSwitchAtIndex:(NSInteger)selectedIndex{
+    NSLog(@"%s",__func__);
+}
+
+/*
+ 与 magnifyTopConstraint 属性相对应  下拉时如需要放大，则传入的图片的上边距约束
+ 考虑到开发中很少使用原生约束，故放开代理方法 用于用户自行根据 偏移处理相应效果
+ 如果设置了 magnifyTopConstraint 改方法将不会被调用
+ 
+ */
+- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset{
+    NSLog(@"偏移%f",offset);
+}
+
 #pragma mark - 懒加载
 - (HHHorizontalPagingView *)pagingView{
     if (!_pagingView) {

@@ -422,8 +422,16 @@ static NSInteger pagingScrollViewTag             = 2000;
                 self.headerOriginYConstraint.constant = -headerViewHeight+self.segmentTopSpace;
             }
             
-            if (self.headerOriginYConstraint.constant >= 0 && self.magnifyTopConstraint) {
-                self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
+
+            if (self.headerOriginYConstraint.constant >= 0) {
+                
+                if (self.magnifyTopConstraint) {
+                    self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
+                    
+                }else if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                    
+                    [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
+                }
             }
             
         }else {            //向下滚动
@@ -432,8 +440,15 @@ static NSInteger pagingScrollViewTag             = 2000;
                 self.headerOriginYConstraint.constant = -self.headerViewHeight-self.segmentBarHeight-self.currentScrollView.contentOffset.y;
             }
             
-            if (self.headerOriginYConstraint.constant > 0 && self.magnifyTopConstraint) {
-                self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
+            if (self.headerOriginYConstraint.constant > 0) {
+                
+                if (self.magnifyTopConstraint) {
+                    self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
+                    
+                }else if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                    
+                    [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
+                }
             }
             
         }
