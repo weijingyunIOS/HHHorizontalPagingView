@@ -240,32 +240,42 @@ static NSInteger pagingScrollViewTag             = 2000;
         return;
     }
     
+    // 在当前页被点击
     if (segmentButton.selected) {
         if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelectedSameItem:atIndex:)]) {
             [self.delegate pagingView:self segmentDidSelectedSameItem:segmentButton atIndex:clickIndex];
         }
-    }else{
-        for(UIButton *b in self.segmentButtons) {
-            [b setSelected:NO];
-        }
-        [segmentButton setSelected:YES];
-        
-        if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
-            [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
-        }
+        return;
     }
     
+    // 非当前页被点击
+    for(UIButton *b in self.segmentButtons) {
+        [b setSelected:NO];
+    }
+    [segmentButton setSelected:YES];
+    
+   
+    
     [self.horizontalCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:clickIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+    [self.horizontalCollectionView reloadData];
+    
     if(self.currentScrollView.contentOffset.y<-(self.headerViewHeight+self.segmentBarHeight)) {
         [self.currentScrollView setContentOffset:CGPointMake(self.currentScrollView.contentOffset.x, -(self.headerViewHeight+self.segmentBarHeight)) animated:NO];
     }else {
         [self.currentScrollView setContentOffset:self.currentScrollView.contentOffset animated:NO];
     }
+    
+    if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
+        [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(pagingView:didiSwitchAtIndex:)]) {
+        [self.delegate pagingView:self didiSwitchAtIndex:clickIndex];
+    }
+    
     self.currentScrollView = [self scrollViewAtIndex:clickIndex];
     [self removeCacheScrollView];
-    if(self.pagingViewSwitchBlock) {
-        self.pagingViewSwitchBlock(clickIndex);
-    }
+
 }
 
 - (void)adjustOffsetContentView:(UIScrollView *)scrollView {
@@ -345,6 +355,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         [v removeFromSuperview];
     }
     UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
+    cell.tag = v.tag;
     UIViewController *vc = [self viewControllerForView:v];
     [cell.contentView addSubview:vc.view];
     
@@ -377,9 +388,6 @@ static NSInteger pagingScrollViewTag             = 2000;
                 [self segmentButtonEvent:self.currentTouchButton];
             }else if(self.currentTouchView) {
                 [self.currentTouchView viewWasTappedPoint:self.currentTouchViewPoint];
-                if (self.clickEventViewsBlock) {
-                    self.clickEventViewsBlock(self.currentTouchView);
-                }
             }
             self.currentTouchView = nil;
             self.currentTouchButton = nil;
@@ -465,8 +473,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     [self setSelectedButPage:currentPage];
     self.currentScrollView = [self scrollViewAtIndex:currentPage];
     [self removeCacheScrollView];
-    if(self.pagingViewSwitchBlock) {
-        self.pagingViewSwitchBlock(currentPage);
+    if ([self.delegate respondsToSelector:@selector(pagingView:didiSwitchAtIndex:)]) {
+        [self.delegate pagingView:self didiSwitchAtIndex:currentPage];
     }
 }
 
@@ -497,19 +505,18 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)removeCacheScrollView{
+//    NSLog(@"--------%tu",self.contentViewArray.count);
     if (self.contentViewArray.count <= self.maxCacheCout) {
         return;
     }
-    while (self.contentViewArray.count > self.maxCacheCout) {
-        UIScrollView *scrollView = self.contentViewArray.firstObject;
-        if (scrollView == self.currentScrollView) {
-            if (self.contentViewArray.count == 1) {
-                return;
-            }
-            scrollView = self.contentViewArray.lastObject;
+    
+    NSInteger currentCount = self.currentScrollView.tag;
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (labs(scrollView.tag - currentCount) > 1) {
+            [self removeScrollView:scrollView];
         }
-        [self removeScrollView:scrollView];
-    }
+    }];
+//    NSLog(@"++++++%tu",self.contentViewArray.count);
 }
 
 - (void)releaseCache{

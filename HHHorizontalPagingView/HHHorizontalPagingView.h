@@ -24,9 +24,13 @@
 - (NSArray<UIButton*> *)segmentButtonsInPagingView:(HHHorizontalPagingView *)pagingView;
 
 @optional
-// 点击segment
+// 非当前页点击segment
 - (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelected:(UIButton *)item atIndex:(NSInteger)selectedIndex;
+// 当前页点击segment
 - (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelectedSameItem:(UIButton *)item atIndex:(NSInteger)selectedIndex;
+
+// 视图切换完成时调用
+- (void)pagingView:(HHHorizontalPagingView*)pagingView didiSwitchAtIndex:(NSInteger)selectedIndex;
 
 // 监听当前的scrollView
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollViewDidScroll:(UIScrollView *)scrollView;
@@ -63,15 +67,6 @@
  */
 @property (nonatomic, strong, readonly) UIView *segmentView;
 
-/**
- *  视图切换的回调block
- */
-@property (nonatomic, copy) void (^pagingViewSwitchBlock)(NSInteger switchIndex);
-
-/**
- *  视图点击的回调block
- */
-@property (nonatomic, copy) void (^clickEventViewsBlock)(UIView *eventView);
 
 /**
  *  实例化横向分页控件
