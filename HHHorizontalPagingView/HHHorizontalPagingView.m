@@ -33,7 +33,7 @@
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
 @property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
-@property (nonatomic, assign) BOOL               isPull;// 是否是下拉触发
+@property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
 /**
  *  代理
@@ -465,13 +465,11 @@ static NSInteger pagingScrollViewTag             = 2000;
         
         
         if (self.headerOriginYConstraint.constant > 0) {
-            self.isPull = YES;
+      
             if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                 
                 [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
             }
-        }else{
-            self.isPull = NO;
         }
         
         
@@ -494,6 +492,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
+    self.isScroll = YES;
     CGFloat offsetpage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
     CGFloat py = fabs((int)offsetpage - offsetpage);
     if ( py <= 0.3 || py >= 0.7) {
@@ -515,9 +514,11 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 
-    if (self.isPull ||  self.isRefresh) {
+    if (!self.isScroll) {
         return;
     }
+    
+    self.isScroll = NO;
     CGFloat currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
     
     [self setSelectedButPage:currentPage];
