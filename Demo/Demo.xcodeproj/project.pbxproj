@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5C33A7791DB9EAB000E05E6E /* ArtDefaultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A7781DB9EAB000E05E6E /* ArtDefaultViewController.m */; };
 		5C33A77D1DB9ED7E00E05E6E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C33A77B1DB9ED7E00E05E6E /* Main.storyboard */; };
+		5C33A7801DB9F4C600E05E6E /* ArtPullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A77F1DB9F4C600E05E6E /* ArtPullViewController.m */; };
 		5CE9F2FC1CF9729800DB414B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F2FB1CF9729800DB414B /* main.m */; };
 		5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F2FE1CF9729800DB414B /* AppDelegate.m */; };
 		5CE9F3021CF9729800DB414B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3011CF9729800DB414B /* ViewController.m */; };
@@ -42,6 +43,8 @@
 		5C33A7771DB9EAB000E05E6E /* ArtDefaultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtDefaultViewController.h; sourceTree = "<group>"; };
 		5C33A7781DB9EAB000E05E6E /* ArtDefaultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtDefaultViewController.m; sourceTree = "<group>"; };
 		5C33A77C1DB9ED7E00E05E6E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5C33A77E1DB9F4C600E05E6E /* ArtPullViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtPullViewController.h; sourceTree = "<group>"; };
+		5C33A77F1DB9F4C600E05E6E /* ArtPullViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtPullViewController.m; sourceTree = "<group>"; };
 		5CE9F2F71CF9729700DB414B /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE9F2FB1CF9729800DB414B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5CE9F2FD1CF9729800DB414B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -96,6 +99,8 @@
 			children = (
 				5C33A7771DB9EAB000E05E6E /* ArtDefaultViewController.h */,
 				5C33A7781DB9EAB000E05E6E /* ArtDefaultViewController.m */,
+				5C33A77E1DB9F4C600E05E6E /* ArtPullViewController.h */,
+				5C33A77F1DB9F4C600E05E6E /* ArtPullViewController.m */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
 				5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */,
+				5C33A7801DB9F4C600E05E6E /* ArtPullViewController.m in Sources */,
 				5C33A7791DB9EAB000E05E6E /* ArtDefaultViewController.m in Sources */,
 				5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */,
 				5CE9F2FC1CF9729800DB414B /* main.m in Sources */,

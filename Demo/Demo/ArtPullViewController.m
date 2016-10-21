@@ -6,18 +6,17 @@
 //  Copyright © 2016年 weijingyun. All rights reserved.
 //
 
-#import "ArtDefaultViewController.h"
+#import "ArtPullViewController.h"
 #import "JYPagingView.h"
 #import "ArtTableViewController.h"
 
-@interface ArtDefaultViewController ()<HHHorizontalPagingViewDelegate>
+@interface ArtPullViewController ()<HHHorizontalPagingViewDelegate>
 
 @property (nonatomic, strong) HHHorizontalPagingView *pagingView;
-@property (nonatomic, strong) NSLayoutConstraint *topConstraint;
 
 @end
 
-@implementation ArtDefaultViewController
+@implementation ArtPullViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -78,36 +77,14 @@
     [headerView addSubview:imageView];
     
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.topConstraint = [NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
-    [headerView addConstraint:self.topConstraint];
+    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+
     
-    headerView.backgroundColor = [UIColor orangeColor];
     [headerView whenTapped:^{
         [weakSelf showText:@"headerView click"];
-    }];
-    
-    UIView *view = [[UIView alloc] init];
-    [headerView addSubview:view];
-    view.backgroundColor = [UIColor redColor];
-    view.frame = CGRectMake(0, 0, 100, 200);
-    view.tag = 1000;
-    
-    [view whenTapped:^{
-        [weakSelf showText:@"redView click"];
-    }];
-    
-    UIView *view1 = [[UIView alloc] init];
-    [view addSubview:view1];
-    view1.tag = 1001;
-    view1.backgroundColor = [UIColor grayColor];
-    view1.frame = CGRectMake(50, 50, 50, 100);
-    
-    
-    [view1 whenTapped:^{
-        [weakSelf showText:@"grayView click"];
     }];
     
     return headerView;
@@ -152,16 +129,6 @@
     NSLog(@"%s",__func__);
 }
 
-/*
- 与 magnifyTopConstraint 属性相对应  下拉时如需要放大，则传入的图片的上边距约束
- 考虑到开发中很少使用原生约束，故放开代理方法 用于用户自行根据 偏移处理相应效果
- 如果设置了 magnifyTopConstraint 改方法将不会被调用
- 
- */
-- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset{
-    //    NSLog(@"偏移%f",offset);
-    self.topConstraint.constant = offset;
-}
 
 #pragma mark - 懒加载
 - (HHHorizontalPagingView *)pagingView{
@@ -169,8 +136,9 @@
         CGSize size = [UIScreen mainScreen].bounds.size;
         _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
         _pagingView.segmentTopSpace = 20;
+        _pagingView.allowPullToRefresh = YES;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
-        //        _pagingView.maxCacheCout = 5.;
+        _pagingView.maxCacheCout = 5.;
         [self.view addSubview:_pagingView];
     }
     return _pagingView;

@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "ArtDefaultViewController.h"
+#import "ArtPullViewController.h"
 
 #define kClass @"kClass"
 #define kTitle @"kTitle"
@@ -24,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.dataArray = @[@{kClass : [ArtDefaultViewController class],kTitle : @"下拉放大图片Demo"},
-                       @{kClass : [ArtDefaultViewController class],kTitle : @"允许下拉刷新"}];
+                       @{kClass : [ArtPullViewController class],kTitle : @"允许下拉刷新"}];
 }
 
 - (void)loadView{
