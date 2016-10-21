@@ -335,6 +335,11 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (![view isKindOfClass:[UIView class]]) {
         return nil;
     }
+    
+    if (self.isRefresh) {
+        return view;
+    }
+    
     if ([view isDescendantOfView:self.headerView] || [view isDescendantOfView:self.segmentView]) {
         self.horizontalCollectionView.scrollEnabled = NO;
         
@@ -353,7 +358,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             return view;
         }
         
-        return self.isRefresh ? nil : self.currentScrollView;
+        return self.currentScrollView;
     }
     return view;
 }

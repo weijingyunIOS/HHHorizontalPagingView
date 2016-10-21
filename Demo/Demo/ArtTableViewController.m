@@ -48,8 +48,8 @@
     }];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
     if (!self.isRefresh) {
         return;
     }

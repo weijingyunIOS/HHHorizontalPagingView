@@ -61,7 +61,17 @@ extern NSString* kHHHorizontalScrollViewRefreshEndNotification;
 
 /**
  *  允许下拉刷新 默认为NO
-    pullOffset 下拉的偏移量
+ *  pullOffset 下拉的偏移量
+ *
+ *  在 下拉刷新 开始 和 结束时 需要发出通知
+ *  kHHHorizontalScrollViewRefreshStartNotification
+ *  kHHHorizontalScrollViewRefreshEndNotification
+ *  
+    object 传入刷新 的 ScrollView
+    [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
+ *
+ * - (void)viewWillDisappear:(BOOL)animated 或 - (void)viewWillAppear:(BOOL)animated 也要收起刷新动画
+ *
  */
 @property (nonatomic, assign) BOOL allowPullToRefresh;
 @property (nonatomic, assign, readonly) CGFloat pullOffset;
