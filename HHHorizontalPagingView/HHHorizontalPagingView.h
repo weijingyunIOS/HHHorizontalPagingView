@@ -40,6 +40,7 @@
   考虑到开发中很少使用原生约束，故放开代理方法 用于用户自行根据 偏移处理相应效果
  
   该版本将 magnifyTopConstraint 属性删除
+  allowPullToRefresh为YES 时 该代理失效
  */
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset;
 
@@ -53,6 +54,11 @@
  *  segment据顶部的距离
  */
 @property (nonatomic, assign) CGFloat segmentTopSpace;
+
+/**
+ *  允许下拉刷新 默认为NO
+ */
+@property (nonatomic, assign) BOOL allowPullToRefresh;
 
 /**
  *  缓存视图数 默认是 3

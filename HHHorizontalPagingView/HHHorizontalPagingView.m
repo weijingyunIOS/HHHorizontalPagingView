@@ -32,6 +32,7 @@
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
+@property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
 
 /**
  *  代理
@@ -416,44 +417,64 @@ static NSInteger pagingScrollViewTag             = 2000;
         CGFloat headerViewHeight    = self.headerViewHeight;
         CGFloat headerDisplayHeight = self.headerViewHeight+self.headerOriginYConstraint.constant;
         
+        CGFloat py = 0;
         if(deltaY >= 0) {    //向上滚动
             
             if(headerDisplayHeight - deltaY <= self.segmentTopSpace) {
-                self.headerOriginYConstraint.constant = -headerViewHeight+self.segmentTopSpace;
+                py = -headerViewHeight+self.segmentTopSpace;
             }else {
-                self.headerOriginYConstraint.constant -= deltaY;
+                py = self.headerOriginYConstraint.constant - deltaY;
             }
             if(headerDisplayHeight <= self.segmentTopSpace) {
-                self.headerOriginYConstraint.constant = -headerViewHeight+self.segmentTopSpace;
+                py = -headerViewHeight+self.segmentTopSpace;
             }
             
-
-            if (self.headerOriginYConstraint.constant >= 0) {
+            if (!self.allowPullToRefresh) {
+                self.headerOriginYConstraint.constant = py;
                 
-                if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
-                    
-                    [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
+            }else if (py < 0 && !self.isRefresh) {
+                self.headerOriginYConstraint.constant = py;
+                
+            }else{
+                
+                if (self.currentScrollView.contentOffset.y >= -headerViewHeight -  self.segmentBarHeight) {
+                    self.isRefresh = NO;
                 }
+                self.headerOriginYConstraint.constant = 0;
             }
+            
             
         }else {            //向下滚动
             
             if (headerDisplayHeight+self.segmentBarHeight < -newOffsetY) {
-                self.headerOriginYConstraint.constant = -self.headerViewHeight-self.segmentBarHeight-self.currentScrollView.contentOffset.y;
-            }
-            
-            if (self.headerOriginYConstraint.constant > 0) {
+                py = -self.headerViewHeight-self.segmentBarHeight-self.currentScrollView.contentOffset.y;
                 
-                if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                if (!self.allowPullToRefresh) {
+                    self.headerOriginYConstraint.constant = py;
                     
-                    [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
+                }else if (py <0) {
+                    self.headerOriginYConstraint.constant = py;
+                }else{
+                    self.isRefresh = YES;
+                    self.headerOriginYConstraint.constant = 0;
                 }
             }
             
         }
+        
+        
+        if (self.headerOriginYConstraint.constant > 0) {
+            
+            if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                
+                [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
+            }
+        }
+        
+        
     }else if(context == &HHHorizontalPagingViewInsetContext) {
         
-        if(self.currentScrollView.contentOffset.y > -self.segmentBarHeight) {
+        if(self.currentScrollView.contentOffset.y > -self.segmentBarHeight || self.isRefresh) {
             return;
         }
         [UIView animateWithDuration:0.2 animations:^{
