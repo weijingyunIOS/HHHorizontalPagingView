@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 @class HHHorizontalPagingView;
 
+// 使用 allowPullToRefresh 结束刷新需要发出通知
+extern NSString* kHHHorizontalScrollViewRefreshStartNotification;
+extern NSString* kHHHorizontalScrollViewRefreshEndNotification;
+
 @protocol HHHorizontalPagingViewDelegate<NSObject>
 
 // 下方左右滑UIScrollView设置

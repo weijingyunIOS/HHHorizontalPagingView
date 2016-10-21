@@ -9,6 +9,10 @@
 #import "HHHorizontalPagingView.h"
 #import "UIView+WhenTappedBlocks.h"
 
+NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrollViewRefreshStartNotification";
+NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollViewRefreshEndNotification";
+
+
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UIView             *headerView;
@@ -33,6 +37,7 @@
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
 @property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
+@property (nonatomic, assign) BOOL               scrollJudge;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
@@ -81,6 +86,8 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self configureHeaderView];
         [self configureSegmentView];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(releaseCache) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshStart:) name:kHHHorizontalScrollViewRefreshStartNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshEnd:) name:kHHHorizontalScrollViewRefreshEndNotification object:nil];
 
     }
     return self;
@@ -345,7 +352,8 @@ static NSInteger pagingScrollViewTag             = 2000;
         }else {
             return view;
         }
-        return self.currentScrollView;
+        
+        return self.isRefresh ? nil : self.currentScrollView;
     }
     return view;
 }
@@ -381,6 +389,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:scrollViewHeight == 0 ? 0 : -(cell.contentView.frame.size.height-v.frame.size.height)]];
     [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     self.currentScrollView = v;
+    self.isRefresh = NO;
     [cell layoutIfNeeded];
     [self adjustOffsetContentView:v];
     return cell;
@@ -441,13 +450,13 @@ static NSInteger pagingScrollViewTag             = 2000;
             if (!self.allowPullToRefresh) {
                 self.headerOriginYConstraint.constant = py;
                 
-            }else if (py < 0 && !self.isRefresh) {
+            }else if (py < 0 && !self.isRefresh && !self.scrollJudge) {
                 self.headerOriginYConstraint.constant = py;
                 
             }else{
                 
                 if (self.currentScrollView.contentOffset.y >= -headerViewHeight -  self.segmentBarHeight) {
-                    self.isRefresh = NO;
+                    self.scrollJudge = NO;
                 }
                 self.headerOriginYConstraint.constant = 0;
             }
@@ -463,8 +472,8 @@ static NSInteger pagingScrollViewTag             = 2000;
                     
                 }else if (py <0) {
                     self.headerOriginYConstraint.constant = py;
-                }else{
-                    self.isRefresh = YES;
+                } else{
+                    self.scrollJudge = YES;
                     self.headerOriginYConstraint.constant = 0;
                 }
             }
@@ -483,7 +492,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         
     }else if(context == &HHHorizontalPagingViewInsetContext) {
         
-        if(self.currentScrollView.contentOffset.y > -self.segmentBarHeight || self.isRefresh) {
+        if(self.allowPullToRefresh || self.currentScrollView.contentOffset.y > -self.segmentBarHeight) {
             return;
         }
         [UIView animateWithDuration:0.2 animations:^{
@@ -495,6 +504,20 @@ static NSInteger pagingScrollViewTag             = 2000;
         
     }
     
+}
+
+- (void)refreshStart:(NSNotification *)notification{
+    UIScrollView *obj = notification.object;
+    if (obj == self.currentScrollView) {
+        self.isRefresh = YES;
+    }
+}
+
+- (void)refreshEnd:(NSNotification *)notification{
+    UIScrollView *obj = notification.object;
+    if (obj == self.currentScrollView) {
+        self.isRefresh = NO;
+    }
 }
 
 #pragma mark - UIScrollViewDelegate

@@ -8,10 +8,12 @@
 
 #import "ArtTableViewController.h"
 #import "SVPullToRefresh.h"
+#import "JYPagingView.h"
 
 @interface ArtTableViewController()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, assign) BOOL isRefresh;
 
 @end
 
@@ -33,10 +35,26 @@
     }
     __weak typeof(self)weakSelf = self;
     [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        weakSelf.isRefresh = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshStartNotification object:weakSelf.tableView userInfo:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (!weakSelf.isRefresh) {
+                return;
+            }
             [weakSelf.tableView.pullToRefreshView stopAnimating];
+            weakSelf.isRefresh = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
         });
     }];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    if (!self.isRefresh) {
+        return;
+    }
+    self.isRefresh = NO;
+    [self.tableView.pullToRefreshView stopAnimating];
 }
 
 - (void)dealloc{
