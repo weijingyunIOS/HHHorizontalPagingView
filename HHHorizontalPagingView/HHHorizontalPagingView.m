@@ -430,10 +430,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 
             if (self.headerOriginYConstraint.constant >= 0) {
                 
-                if (self.magnifyTopConstraint) {
-                    self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
-                    
-                }else if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                     
                     [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
                 }
@@ -447,10 +444,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             
             if (self.headerOriginYConstraint.constant > 0) {
                 
-                if (self.magnifyTopConstraint) {
-                    self.magnifyTopConstraint.constant = -self.headerOriginYConstraint.constant;
-                    
-                }else if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+                if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                     
                     [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
                 }
