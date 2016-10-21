@@ -9,6 +9,7 @@
 #import "ArtPullViewController.h"
 #import "JYPagingView.h"
 #import "ArtTableViewController.h"
+#import "SVPullToRefresh.h"
 
 @interface ArtPullViewController ()<HHHorizontalPagingViewDelegate>
 
@@ -58,6 +59,8 @@
     ArtTableViewController *vc = [[ArtTableViewController alloc] init];
     [self addChildViewController:vc];
     vc.index = index;
+    vc.allowPullToRefresh = YES;
+    vc.pullOffset = self.pagingView.pullOffset;
     return (UIScrollView *)vc.view;
 }
 

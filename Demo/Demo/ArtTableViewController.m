@@ -7,6 +7,7 @@
 //
 
 #import "ArtTableViewController.h"
+#import "SVPullToRefresh.h"
 
 @interface ArtTableViewController()<UITableViewDelegate,UITableViewDataSource>
 
@@ -23,10 +24,19 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
     self.view = self.tableView;
+    if (!self.allowPullToRefresh) {
+        return;
+    }
 }
 
 - (void)viewDidLoad{
     [super viewDidLoad];
+    __weak typeof(self)weakSelf = self;
+    [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf.tableView.pullToRefreshView stopAnimating];
+        });
+    }];
 }
 
 - (void)dealloc{

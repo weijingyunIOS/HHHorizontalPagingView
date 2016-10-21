@@ -33,6 +33,7 @@
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
 @property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
+@property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
 /**
@@ -96,6 +97,13 @@ static NSInteger pagingScrollViewTag             = 2000;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.horizontalCollectionView reloadData];
     });
+}
+
+- (CGFloat)pullOffset{
+    if (_pullOffset == 0) {
+        _pullOffset = [self.delegate headerHeightInPagingView:self] + [self.delegate segmentHeightInPagingView:self];
+    }
+    return _pullOffset;
 }
 
 - (void)scrollToIndex:(NSInteger)pageIndex {

@@ -12,5 +12,7 @@
 
 @property (nonatomic, strong, readonly) UITableView *tableView;
 @property (nonatomic, assign) NSInteger index;
+@property (nonatomic, assign) BOOL allowPullToRefresh;
+@property (nonatomic, assign) CGFloat pullOffset;
 
 @end

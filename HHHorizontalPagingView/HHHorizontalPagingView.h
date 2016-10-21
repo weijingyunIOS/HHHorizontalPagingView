@@ -57,8 +57,10 @@
 
 /**
  *  允许下拉刷新 默认为NO
+    pullOffset 下拉的偏移量
  */
 @property (nonatomic, assign) BOOL allowPullToRefresh;
+@property (nonatomic, assign, readonly) CGFloat pullOffset;
 
 /**
  *  缓存视图数 默认是 3
