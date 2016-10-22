@@ -40,6 +40,7 @@ NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollV
 @property (nonatomic, assign) BOOL               scrollJudge;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
+@property (nonatomic, assign) BOOL               isViewTrigger; //是否是header触发手势
 
 /**
  *  代理
@@ -335,7 +336,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (![view isKindOfClass:[UIView class]]) {
         return nil;
     }
-    
+    self.isViewTrigger = NO;
     if (self.isRefresh) {
         return view;
     }
@@ -357,7 +358,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         }else {
             return view;
         }
-        
+        self.isViewTrigger = YES;
         return self.currentScrollView;
     }
     return view;
@@ -423,6 +424,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         }
         
     }else if (context == &HHHorizontalPagingViewScrollContext) {
+        
         self.currentTouchView = nil;
         self.currentTouchButton = nil;
         if (self.isSwitching) {
@@ -480,6 +482,10 @@ static NSInteger pagingScrollViewTag             = 2000;
                 } else{
                     self.scrollJudge = YES;
                     self.headerOriginYConstraint.constant = 0;
+                    if (self.isViewTrigger) {
+                        // 防止滑动header的时候也触发下拉
+                        [self.currentScrollView setContentOffset:CGPointMake(0, oldOffsetY) animated:NO];
+                    }
                 }
             }
             
