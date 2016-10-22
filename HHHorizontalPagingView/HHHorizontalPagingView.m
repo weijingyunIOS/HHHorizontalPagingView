@@ -484,7 +484,7 @@ static NSInteger pagingScrollViewTag             = 2000;
                     self.headerOriginYConstraint.constant = 0;
                     if (self.isViewTrigger) {
                         // 防止滑动header的时候也触发下拉
-                        [self.currentScrollView setContentOffset:CGPointMake(0, oldOffsetY) animated:NO];
+                        [self.currentScrollView setContentOffset:CGPointMake(0, -self.pullOffset) animated:NO];
                     }
                 }
             }
