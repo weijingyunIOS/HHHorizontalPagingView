@@ -637,10 +637,12 @@ static NSInteger pagingScrollViewTag             = 2000;
 - (void)removeScrollView:(UIScrollView *)scrollView{
     
     [self removeObserverFor:scrollView];
-    scrollView.superview.tag = 0;
-    [scrollView removeFromSuperview];
-    [[self viewControllerForView:scrollView] removeFromParentViewController];
     [self.contentViewArray removeObject:scrollView];
+    UIViewController *vc = [self viewControllerForView:scrollView];
+    vc.view.tag = 0;
+    vc.view.superview.tag = 0;
+    [vc.view removeFromSuperview];
+    [vc removeFromParentViewController];
 }
 
 - (UIViewController *)viewControllerForView:(UIView *)view {
