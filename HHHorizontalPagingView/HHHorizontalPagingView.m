@@ -40,7 +40,7 @@ NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollV
 @property (nonatomic, assign) BOOL               scrollJudge;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
-@property (nonatomic, assign) BOOL               isViewTrigger; //是否是header触发手势
+//@property (nonatomic, assign) BOOL               isViewTrigger; //是否是header触发手势
 
 /**
  *  代理
@@ -68,7 +68,11 @@ static NSInteger pagingScrollViewTag             = 2000;
         layout.minimumInteritemSpacing     = 0.0;
         layout.scrollDirection             = UICollectionViewScrollDirectionHorizontal;
         self.horizontalCollectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
-        [self.horizontalCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:pagingCellIdentifier];
+      
+        // 应当为每一个ScrollView 注册一个唯一的Cell
+        NSInteger section = [self.delegate numberOfSectionsInPagingView:self];
+        [self registCellForm:0 to:section];
+      
         self.horizontalCollectionView.backgroundColor                = [UIColor clearColor];
         self.horizontalCollectionView.dataSource                     = self;
         self.horizontalCollectionView.delegate                       = self;
@@ -94,7 +98,9 @@ static NSInteger pagingScrollViewTag             = 2000;
     return self;
 }
 
+
 - (void)reload{
+  
     self.headerView                  = [self.delegate headerViewInPagingView:self];
     self.headerViewHeight            = [self.delegate headerHeightInPagingView:self];
     self.segmentButtons              = [self.delegate segmentButtonsInPagingView:self];
@@ -105,6 +111,18 @@ static NSInteger pagingScrollViewTag             = 2000;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.horizontalCollectionView reloadData];
     });
+}
+
+// 注册cell
+- (void)registCellForm:(NSInteger)form to:(NSInteger)to{
+  
+  for (NSInteger i = form; i < to; i ++) {
+    [self.horizontalCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:[self cellReuseIdentifierForIndex:i]];
+  }
+}
+
+- (NSString *)cellReuseIdentifierForIndex:(NSInteger)aIndex{
+  return [NSString stringWithFormat:@"%@_%tu",pagingCellIdentifier,aIndex];
 }
 
 - (CGFloat)pullOffset{
@@ -336,7 +354,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (![view isKindOfClass:[UIView class]]) {
         return nil;
     }
-    self.isViewTrigger = NO;
+//    self.isViewTrigger = NO;
     if (self.isRefresh) {
         return view;
     }
@@ -358,7 +376,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         }else {
             return view;
         }
-        self.isViewTrigger = YES;
+//        self.isViewTrigger = YES;
         return self.currentScrollView;
     }
     return view;
@@ -373,30 +391,41 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 #pragma mark - UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+  
     return [self.delegate numberOfSectionsInPagingView:self];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     self.isSwitching = YES;
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:pagingCellIdentifier forIndexPath:indexPath];
+    NSString* key = [self cellReuseIdentifierForIndex:indexPath.row];
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:key forIndexPath:indexPath];
+    UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
+  
+  // 只有在cell未添加scrollView时才添加，让以下代码只在需要时执行
+  if (cell.contentView.tag != v.tag) {
+      
     cell.backgroundColor = [UIColor clearColor];
     for(UIView *v in cell.contentView.subviews) {
-        [v removeFromSuperview];
+      [v removeFromSuperview];
     }
-    UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
-    cell.tag = v.tag;
+    cell.contentView.tag = v.tag;
     UIViewController *vc = [self viewControllerForView:v];
-    [cell.contentView addSubview:vc.view];
-    
-    CGFloat scrollViewHeight = v.frame.size.height;
-    v.translatesAutoresizingMaskIntoConstraints = NO;
-    [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-    [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:scrollViewHeight == 0 ? 0 : -(cell.contentView.frame.size.height-v.frame.size.height)]];
-    [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:v attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    // 如果为空表示 v还没有响应者，在部分机型上出现该问题，情况不明先这么看看
+      [cell.contentView addSubview:vc.view];
+      cell.tag = v.tag;
+      CGFloat scrollViewHeight = vc.view.frame.size.height;
+      vc.view.translatesAutoresizingMaskIntoConstraints = NO;
+      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:scrollViewHeight == 0 ? 0 : -(cell.contentView.frame.size.height-vc.view.frame.size.height)]];
+      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+
+     [cell layoutIfNeeded];
+  }
+  
+  
     self.currentScrollView = v;
     self.isRefresh = NO;
-    [cell layoutIfNeeded];
     [self adjustOffsetContentView:v];
     return cell;
     
@@ -482,10 +511,10 @@ static NSInteger pagingScrollViewTag             = 2000;
                 } else{
                     self.scrollJudge = YES;
                     self.headerOriginYConstraint.constant = 0;
-                    if (self.isViewTrigger) {
-                        // 防止滑动header的时候也触发下拉
-                        [self.currentScrollView setContentOffset:CGPointMake(0, -self.pullOffset) animated:NO];
-                    }
+//                    if (self.isViewTrigger) {
+//                        // 防止滑动header的时候也触发下拉
+//                        [self.currentScrollView setContentOffset:CGPointMake(0, -self.pullOffset) animated:NO];
+//                    }
                 }
             }
             
@@ -606,7 +635,9 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)removeScrollView:(UIScrollView *)scrollView{
+    
     [self removeObserverFor:scrollView];
+    scrollView.superview.tag = 0;
     [scrollView removeFromSuperview];
     [[self viewControllerForView:scrollView] removeFromParentViewController];
     [self.contentViewArray removeObject:scrollView];
