@@ -402,13 +402,13 @@ static NSInteger pagingScrollViewTag             = 2000;
     UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
   
   // 只有在cell未添加scrollView时才添加，让以下代码只在需要时执行
-  if (cell.contentView.tag != v.tag) {
-      
+  if (cell.tag != v.tag) {
+    
     cell.backgroundColor = [UIColor clearColor];
     for(UIView *v in cell.contentView.subviews) {
       [v removeFromSuperview];
     }
-    cell.contentView.tag = v.tag;
+    cell.tag = v.tag;
     UIViewController *vc = [self viewControllerForView:v];
     // 如果为空表示 v还没有响应者，在部分机型上出现该问题，情况不明先这么看看
       [cell.contentView addSubview:vc.view];
@@ -635,14 +635,14 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)removeScrollView:(UIScrollView *)scrollView{
-    
-    [self removeObserverFor:scrollView];
-    [self.contentViewArray removeObject:scrollView];
-    UIViewController *vc = [self viewControllerForView:scrollView];
-    vc.view.tag = 0;
-    vc.view.superview.tag = 0;
-    [vc.view removeFromSuperview];
-    [vc removeFromParentViewController];
+  
+  [self removeObserverFor:scrollView];
+  [self.contentViewArray removeObject:scrollView];
+  UIViewController *vc = [self viewControllerForView:scrollView];
+  vc.view.tag = 0;
+  vc.view.superview.tag = 0;
+  [vc.view removeFromSuperview];
+  [vc removeFromParentViewController];
 }
 
 - (UIViewController *)viewControllerForView:(UIView *)view {
