@@ -12,6 +12,8 @@
 		5C33A7801DB9F4C600E05E6E /* ArtPullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A77F1DB9F4C600E05E6E /* ArtPullViewController.m */; };
 		5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A7BB1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m */; };
 		5C33A7BF1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A7BD1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m */; };
+		5CCDB9F61DCB3AA9000536D2 /* ArtWholePullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */; };
+		5CCDB9FA1DCB3CAB000536D2 /* ArtRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCDB9F91DCB3CAB000536D2 /* ArtRefreshView.m */; };
 		5CE9F2FC1CF9729800DB414B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F2FB1CF9729800DB414B /* main.m */; };
 		5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F2FE1CF9729800DB414B /* AppDelegate.m */; };
 		5CE9F3021CF9729800DB414B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3011CF9729800DB414B /* ViewController.m */; };
@@ -52,6 +54,10 @@
 		5C33A7BB1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
 		5C33A7BC1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
 		5C33A7BD1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
+		5CCDB9F41DCB3AA9000536D2 /* ArtWholePullViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtWholePullViewController.h; sourceTree = "<group>"; };
+		5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtWholePullViewController.m; sourceTree = "<group>"; };
+		5CCDB9F81DCB3CAB000536D2 /* ArtRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtRefreshView.h; sourceTree = "<group>"; };
+		5CCDB9F91DCB3CAB000536D2 /* ArtRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtRefreshView.m; sourceTree = "<group>"; };
 		5CE9F2F71CF9729700DB414B /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE9F2FB1CF9729800DB414B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5CE9F2FD1CF9729800DB414B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -104,10 +110,13 @@
 		5C33A77A1DB9EABB00E05E6E /* example */ = {
 			isa = PBXGroup;
 			children = (
+				5CCDB9F71DCB3C83000536D2 /* RefreshView */,
 				5C33A7771DB9EAB000E05E6E /* ArtDefaultViewController.h */,
 				5C33A7781DB9EAB000E05E6E /* ArtDefaultViewController.m */,
 				5C33A77E1DB9F4C600E05E6E /* ArtPullViewController.h */,
 				5C33A77F1DB9F4C600E05E6E /* ArtPullViewController.m */,
+				5CCDB9F41DCB3AA9000536D2 /* ArtWholePullViewController.h */,
+				5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -122,6 +131,15 @@
 				5C33A7BD1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m */,
 			);
 			path = SVPullToRefresh;
+			sourceTree = "<group>";
+		};
+		5CCDB9F71DCB3C83000536D2 /* RefreshView */ = {
+			isa = PBXGroup;
+			children = (
+				5CCDB9F81DCB3CAB000536D2 /* ArtRefreshView.h */,
+				5CCDB9F91DCB3CAB000536D2 /* ArtRefreshView.m */,
+			);
+			name = RefreshView;
 			sourceTree = "<group>";
 		};
 		5CE9F2EE1CF9729700DB414B = {
@@ -334,6 +352,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CCDB9FA1DCB3CAB000536D2 /* ArtRefreshView.m in Sources */,
+				5CCDB9F61DCB3AA9000536D2 /* ArtWholePullViewController.m in Sources */,
 				5CE9F3021CF9729800DB414B /* ViewController.m in Sources */,
 				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */,
