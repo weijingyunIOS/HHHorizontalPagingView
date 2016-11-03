@@ -7,6 +7,7 @@
 //
 
 #import "HHHorizontalPagingView.h"
+#import <objc/runtime.h>
 #import "UIView+WhenTappedBlocks.h"
 
 NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrollViewRefreshStartNotification";
@@ -14,6 +15,38 @@ NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollV
 NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackRefreshEndNotification";
 
 
+#pragma mark - ScrollView 分类用于刷新处理
+static char khhh_isRefresh;
+static char khhh_startRefresh;
+@interface UIScrollView (HHHorizontalPagingView)
+
+@property (nonatomic, assign) BOOL hhh_isRefresh;  // 刷新中
+@property (nonatomic, assign) BOOL hhh_startRefresh; // 开始刷新
+
+
+@end
+
+@implementation UIScrollView (HHHorizontalPagingView)
+
+- (void)setHhh_isRefresh:(BOOL)hhh_isRefresh{
+    objc_setAssociatedObject(self,&khhh_isRefresh,[NSNumber numberWithBool:hhh_isRefresh],OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)hhh_isRefresh{
+    return [objc_getAssociatedObject(self, &khhh_isRefresh) boolValue];
+}
+
+- (void)setHhh_startRefresh:(BOOL)hhh_startRefresh{
+    objc_setAssociatedObject(self,&khhh_startRefresh,[NSNumber numberWithBool:hhh_startRefresh],OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)hhh_startRefresh{
+    return [objc_getAssociatedObject(self, &khhh_startRefresh) boolValue];
+}
+
+@end
+
+#pragma mark - HHHorizontalPagingView
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UIView             *headerView;
@@ -38,11 +71,9 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
 @property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
-@property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
-@property (nonatomic, assign) BOOL               scrollJudge;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
-//@property (nonatomic, assign) BOOL               isViewTrigger; //是否是header触发手势
+
 
 /**
  *  代理
@@ -344,8 +375,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (![view isKindOfClass:[UIView class]]) {
         return nil;
     }
-//    self.isViewTrigger = NO;
-    if (self.isRefresh) {
+    
+    if (self.currentScrollView.hhh_isRefresh) {
         return view;
     }
     
@@ -366,7 +397,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         }else {
             return view;
         }
-//        self.isViewTrigger = YES;
+        
         return self.currentScrollView;
     }
     return view;
@@ -480,13 +511,13 @@ static NSInteger pagingScrollViewTag             = 2000;
             if (!self.allowPullToRefresh) {
                 self.headerOriginYConstraint.constant = py;
                 
-            }else if (py < 0 && !self.isRefresh && !self.scrollJudge) {
+            }else if (py < 0 && !self.currentScrollView.hhh_isRefresh && !self.currentScrollView.hhh_startRefresh) {
                 self.headerOriginYConstraint.constant = py;
                 
             }else{
                 
                 if (self.currentScrollView.contentOffset.y >= -headerViewHeight -  self.segmentBarHeight) {
-                    self.scrollJudge = NO;
+                    self.currentScrollView.hhh_startRefresh = NO;
                 }
                 self.headerOriginYConstraint.constant = 0;
             }
@@ -503,12 +534,8 @@ static NSInteger pagingScrollViewTag             = 2000;
                 }else if (py <0) {
                     self.headerOriginYConstraint.constant = py;
                 } else{
-                    self.scrollJudge = YES;
+                    self.currentScrollView.hhh_startRefresh = YES;
                     self.headerOriginYConstraint.constant = 0;
-//                    if (self.isViewTrigger) {
-//                        // 防止滑动header的时候也触发下拉
-//                        [self.currentScrollView setContentOffset:CGPointMake(0, -self.pullOffset) animated:NO];
-//                    }
                 }
             }
             
@@ -544,8 +571,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     UIScrollView *obj = notification.object;
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
       if (obj == scrollView) {
-        self.isRefresh = YES;
-        self.scrollJudge = YES;
+        scrollView.hhh_startRefresh = YES;
+        scrollView.hhh_isRefresh = YES;
         *stop = YES;
       }
     }];
@@ -555,8 +582,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     UIScrollView *obj = notification.object;
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj == scrollView) {
-            self.isRefresh = NO;
-            self.scrollJudge = NO;
+            scrollView.hhh_startRefresh = NO;
+            scrollView.hhh_isRefresh = NO;
             *stop = YES;
         }
     }];
@@ -573,9 +600,10 @@ static NSInteger pagingScrollViewTag             = 2000;
         return;
     }
   
-    if (self.isRefresh) {
-        self.isRefresh = NO;
-        self.scrollJudge = NO;
+    UIScrollView *oldScrollView = [self scrollViewAtIndex:aIndex];
+    if (oldScrollView.hhh_isRefresh) {
+        oldScrollView.hhh_startRefresh = NO;
+        oldScrollView.hhh_isRefresh = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
     }
     
@@ -716,3 +744,4 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 @end
+
