@@ -542,9 +542,13 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)refreshStart:(NSNotification *)notification{
     UIScrollView *obj = notification.object;
-    if (obj == self.currentScrollView) {
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
+      if (obj == scrollView) {
         self.isRefresh = YES;
-    }
+        self.scrollJudge = YES;
+        *stop = YES;
+      }
+    }];
 }
 
 - (void)refreshEnd:(NSNotification *)notification{
@@ -568,18 +572,20 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (aIndex == toIndex) {
         return;
     }
-    
-    if ([self.delegate respondsToSelector:@selector(pagingView:didSwitchIndex:to:)]) {
-        [self.delegate pagingView:self didSwitchIndex:aIndex to:toIndex];
-    }
-    
+  
     if (self.isRefresh) {
         self.isRefresh = NO;
+        self.scrollJudge = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
     }
     
     [self setSelectedButPage:toIndex];
     [self removeCacheScrollView];
+  
+    if ([self.delegate respondsToSelector:@selector(pagingView:didSwitchIndex:to:)]) {
+      [self.delegate pagingView:self didSwitchIndex:aIndex to:toIndex];
+    }
+  
 }
 
 #pragma mark - UIScrollViewDelegate
