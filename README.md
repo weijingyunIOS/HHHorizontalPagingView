@@ -141,27 +141,63 @@
     1.HHHorizontalPagingView 的 allowPullToRefresh 属性设置YES。
     2.在开始刷新和结束刷新时需要 通知 HHHorizontalPagingView
     
-      [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
-        weakSelf.isRefresh = YES;
+    __weak typeof(self)weakSelf = self;
+    [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshStartNotification object:weakSelf.tableView userInfo:nil];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (!weakSelf.isRefresh) {
-                return;
-            }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [weakSelf.tableView.pullToRefreshView stopAnimating];
-            weakSelf.isRefresh = NO;
             [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
         });
     }];
     
-    3.HHHorizontalPagingView 页面切换时 应该结束 刷新 (否则会有不好的效果)
+    3.HHHorizontalPagingView 如果网络不佳，在切换到其它界面时，刷新还未完成应当如何处理。
+    考虑到切换到其它界面后，再回来headView的位置是不确定的，最好是切到其它位置后将刷新动画
+    收回，监听以下通知即可。
     
-    - (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear];
-    [self.tableView.pullToRefreshView stopAnimating];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(takeBack:) name:kHHHorizontalTakeBackRefreshEndNotification object:self.tableView];
+    
+    - (void)takeBack:(NSNotification *)noti{
+    [self.tableView.pullToRefreshView stopAnimating:NO];
+    }
+	
+	
+	4.SVPullToRefresh 的改动
+	4.1 直接使用SVPullToRefresh 刷新，有个糟糕收回偏移，查看源码是 originalTopInset 偏
+	移导致，故修改提供一个新的外接方法。
+	- (void)addPullToRefreshOffset:(CGFloat)offset withActionHandler:(void (^)(void))actionHandler {
+    
+    if(!self.pullToRefreshView) {
+        SVPullToRefreshView *view = [[SVPullToRefreshView alloc] initWithFrame:CGRectMake(0, -SVPullToRefreshViewHeight, self.bounds.size.width, SVPullToRefreshViewHeight)];
+        view.pullToRefreshActionHandler = actionHandler;
+        view.pullOffset = offset;
+        view.scrollView = self;
+        [self addSubview:view];
+        
+        view.originalTopInset = self.contentInset.top + offset;
+        self.pullToRefreshView = view;
+        self.showsPullToRefresh = YES;
+    }
+	}
+
+	传入的 offset 可通过  HHHorizontalPagingView 的 pullOffset 属性获取。造成的原因
+	是为了留出 headerView的位置，传入的scrollView均做了一个偏移处理。
+	
+	4.2 调用 triggerPullToRefresh 失效 该问题也是偏移导致的修改如下：
+	- (void)startAnimating:(BOOL)animated {
+    
+    CGFloat offset = self.scrollView.contentOffset.y+self.pullOffset;
+    if(fequalzero(offset)) {
+        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x, -self.frame.size.height + self.scrollView.contentOffset.y) animated:animated];
+        self.wasTriggeredByUser = NO;
+    }
+    else{
+        self.wasTriggeredByUser = YES;
+    }
+    self.state = SVPullToRefreshStateLoading;
 	}
 	
-	4.
+	
+	
     
 
 	
