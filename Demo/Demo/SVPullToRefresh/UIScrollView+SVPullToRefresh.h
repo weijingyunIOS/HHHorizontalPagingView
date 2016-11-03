@@ -18,6 +18,7 @@
 - (void)addPullToRefreshOffset:(CGFloat)offset withActionHandler:(void (^)(void))actionHandler;
 - (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler;
 - (void)triggerPullToRefresh;
+- (void)triggerPullToRefreshAnimated:(BOOL)animated;
 
 @property (nonatomic, strong, readonly) SVPullToRefreshView *pullToRefreshView;
 @property (nonatomic, assign) BOOL showsPullToRefresh;
@@ -48,7 +49,9 @@ typedef NSUInteger SVPullToRefreshState;
 - (void)setSubtitle:(NSString *)subtitle forState:(SVPullToRefreshState)state;
 - (void)setCustomView:(UIView *)view forState:(SVPullToRefreshState)state;
 
+- (void)startAnimating:(BOOL)animated;
 - (void)startAnimating;
+
 - (void)stopAnimating;
 - (void)stopAnimating:(BOOL)animated;
 

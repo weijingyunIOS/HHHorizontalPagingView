@@ -43,6 +43,7 @@ static CGFloat const SVPullToRefreshViewHeight = 60;
 @property (nonatomic, assign) BOOL showsPullToRefresh;
 @property (nonatomic, assign) BOOL showsDateLabel;
 @property(nonatomic, assign) BOOL isObserving;
+@property (nonatomic, assign) CGFloat pullOffset;
 
 - (void)resetScrollViewContentInset;
 - (void)setScrollViewContentInsetForLoading;
@@ -67,6 +68,7 @@ static char UIScrollViewPullToRefreshView;
     if(!self.pullToRefreshView) {
         SVPullToRefreshView *view = [[SVPullToRefreshView alloc] initWithFrame:CGRectMake(0, -SVPullToRefreshViewHeight, self.bounds.size.width, SVPullToRefreshViewHeight)];
         view.pullToRefreshActionHandler = actionHandler;
+        view.pullOffset = offset;
         view.scrollView = self;
         [self addSubview:view];
         
@@ -81,8 +83,12 @@ static char UIScrollViewPullToRefreshView;
 }
 
 - (void)triggerPullToRefresh {
+    [self triggerPullToRefreshAnimated:YES];
+}
+
+- (void)triggerPullToRefreshAnimated:(BOOL)animated{
     self.pullToRefreshView.state = SVPullToRefreshStateTriggered;
-    [self.pullToRefreshView startAnimating];
+    [self.pullToRefreshView startAnimating:animated];
 }
 
 - (void)setPullToRefreshView:(SVPullToRefreshView *)pullToRefreshView {
@@ -432,15 +438,21 @@ static char UIScrollViewPullToRefreshView;
     [self.scrollView triggerPullToRefresh];
 }
 
-- (void)startAnimating{
-    if(fequalzero(self.scrollView.contentOffset.y)) {
-        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x, -self.frame.size.height) animated:YES];
+- (void)startAnimating:(BOOL)animated {
+    
+    CGFloat offset = self.scrollView.contentOffset.y+self.pullOffset;
+    if(fequalzero(offset)) {
+        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x, -self.frame.size.height + self.scrollView.contentOffset.y) animated:animated];
         self.wasTriggeredByUser = NO;
     }
-    else
+    else{
         self.wasTriggeredByUser = YES;
-    
+    }
     self.state = SVPullToRefreshStateLoading;
+}
+
+- (void)startAnimating{
+    [self startAnimating:YES];
 }
 
 - (void)stopAnimating:(BOOL)animated {
