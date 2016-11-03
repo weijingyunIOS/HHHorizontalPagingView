@@ -1,7 +1,7 @@
 # HHHorizontalPagingView
 对HHHorizontalPagingView的优化，解决headerView 的点击痛点
 
-![演示](http://i.niupic.com/images/2016/09/27/B7QqwZ.gif)
+![演示](http://images2015.cnblogs.com/blog/737816/201611/737816-20161103101004127-1407411995.gif)
 
 #CocoaPods
 
