@@ -392,7 +392,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     UIScrollView *v = [self scrollViewAtIndex:indexPath.row];
   
   // 只有在cell未添加scrollView时才添加，让以下代码只在需要时执行
-  if (cell.tag != v.tag) {
+  if (cell.contentView.tag != v.tag) {
     
     cell.backgroundColor = [UIColor clearColor];
     for(UIView *v in cell.contentView.subviews) {
@@ -446,6 +446,11 @@ static NSInteger pagingScrollViewTag             = 2000;
         self.currentTouchView = nil;
         self.currentTouchButton = nil;
         if (self.isSwitching) {
+            return;
+        }
+        
+        // 触发如果不是当前 ScrollView 不予响应
+        if (object != self.currentScrollView) {
             return;
         }
         
@@ -544,14 +549,21 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)refreshEnd:(NSNotification *)notification{
     UIScrollView *obj = notification.object;
-    if (obj == self.currentScrollView) {
-        self.isRefresh = NO;
-    }
+    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj == scrollView) {
+            self.isRefresh = NO;
+            self.scrollJudge = NO;
+            *stop = YES;
+        }
+    }];
 }
 
 
 // 视图切换时执行代码
 - (void)didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex{
+    
+    self.currenPage = toIndex;
+    self.currentScrollView = [self scrollViewAtIndex:toIndex];
     
     if (aIndex == toIndex) {
         return;
@@ -566,8 +578,6 @@ static NSInteger pagingScrollViewTag             = 2000;
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
     }
     
-    self.currenPage = toIndex;
-    self.currentScrollView = [self scrollViewAtIndex:toIndex];
     [self setSelectedButPage:toIndex];
     [self removeCacheScrollView];
 }
@@ -646,7 +656,9 @@ static NSInteger pagingScrollViewTag             = 2000;
   [self.contentViewArray removeObject:scrollView];
   UIViewController *vc = [self viewControllerForView:scrollView];
   vc.view.tag = 0;
+  scrollView.superview.tag = 0;
   vc.view.superview.tag = 0;
+  [scrollView removeFromSuperview];
   [vc.view removeFromSuperview];
   [vc removeFromParentViewController];
 }

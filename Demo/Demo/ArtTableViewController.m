@@ -13,7 +13,6 @@
 @interface ArtTableViewController()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, assign) BOOL isRefresh;
 
 @end
 
@@ -38,14 +37,9 @@
     
     __weak typeof(self)weakSelf = self;
     [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
-        weakSelf.isRefresh = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshStartNotification object:weakSelf.tableView userInfo:nil];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (!weakSelf.isRefresh) {
-                return;
-            }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [weakSelf.tableView.pullToRefreshView stopAnimating];
-            weakSelf.isRefresh = NO;
             [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
         });
     }];
@@ -53,15 +47,6 @@
 
 - (void)takeBack:(NSNotification *)noti{
     [self.tableView.pullToRefreshView stopAnimating:NO];
-}
-
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    if (!self.isRefresh) {
-        return;
-    }
-    self.isRefresh = NO;
-    [self.tableView.pullToRefreshView stopAnimating];
 }
 
 - (void)dealloc{
