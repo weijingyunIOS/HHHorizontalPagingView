@@ -12,6 +12,8 @@
 // 使用 allowPullToRefresh 结束刷新需要发出通知
 extern NSString* kHHHorizontalScrollViewRefreshStartNotification;
 extern NSString* kHHHorizontalScrollViewRefreshEndNotification;
+// 监听该通知收回刷新 在切换界面时如果刷新未结束会发出此通知
+extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 
 @protocol HHHorizontalPagingViewDelegate<NSObject>
 
@@ -33,8 +35,8 @@ extern NSString* kHHHorizontalScrollViewRefreshEndNotification;
 // 当前页点击segment
 - (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelectedSameItem:(UIButton *)item atIndex:(NSInteger)selectedIndex;
 
-// 视图切换完成时调用
-- (void)pagingView:(HHHorizontalPagingView*)pagingView didiSwitchAtIndex:(NSInteger)selectedIndex;
+// 视图切换完成时调用 从哪里切换到哪里
+- (void)pagingView:(HHHorizontalPagingView*)pagingView didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex;
 
 // 监听当前的scrollView停止滚动
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollViewDidScroll:(UIScrollView *)scrollView;

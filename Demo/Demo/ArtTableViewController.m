@@ -33,6 +33,9 @@
     if (!self.allowPullToRefresh) {
         return;
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(takeBack:) name:kHHHorizontalTakeBackRefreshEndNotification object:self.tableView];
+    
     __weak typeof(self)weakSelf = self;
     [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
         weakSelf.isRefresh = YES;
@@ -46,6 +49,10 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
         });
     }];
+}
+
+- (void)takeBack:(NSNotification *)noti{
+    [self.tableView.pullToRefreshView stopAnimating:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{

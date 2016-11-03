@@ -33,6 +33,8 @@
 
 	pod 'JYHHHorizontalPagingView'        
 
+
+#实现原理以及介绍
 我的这个是针对[Huanhoo/HHHorizontalPagingView](https://github.com/Huanhoo/HHHorizontalPagingView)的修改，HHHorizontalPagingView是一个实现上
 下滚动时菜单悬停在顶端，并且可以左右滑动切换的视图，实现思路非常巧妙：
 	
@@ -49,7 +51,7 @@
 	而我的修改就是为了解决这两个问题，事件点击是最关键的。
 	
 
-一、点击事件的处理
+### 一、点击事件的处理
 	
 点击难以处理主要是，作者为了实现该效果，重写hitTest方法，导致了headerView响应者链条的断裂，
 虽然作者提供了一个block回调，但对于点击处理无疑是反人类。我的想法是在点击处理时将响应者链条接
@@ -117,7 +119,7 @@
 	- (void)viewWasTappedPoint:(CGPoint)point;方法就可以接起响应者链条。
 	
 	
-二、左右滑动的View过多时的内存问题
+###二、左右滑动的View过多时的内存问题（一般情况也用不着）
 	
 	
 	/／ 缓存视图数 默认是 3
@@ -126,6 +128,44 @@
 	
 	一个界面的展现，分为数据和视图，其中大部分内存为视图所占用，我们只需要保存界面数据，和离开
 	界面时的位置，下次创建时还原即可，不过视图的创建和释放都是比较耗性能的，会卡顿主线程。
+	
+	
+###三、下拉刷新的问题
+	
+	    这种设计视图在刷新处理上有两种方式：一是整体刷新，二是单独刷新。需要更具适用场景进行
+    选择。关于整体刷新本框架无法使用常规的刷新控件处理，如需要可以仿微信朋友圈那种刷新处理(会	考虑抽时间在Demo 中加入该功能示例)。而单独刷新则需要对刷新控件做一下处理来实现。
+    
+    	刷新框架都是监听 UIScrollView 的 contentOffset 来作出响应的处理。本框架为了实现
+    刷新功能做了些处理，同时也需要三方框架做一些配和。Demo中对 SVPullToRefresh 做出了一些	修改，你如果使用的是其它刷新框架，可参照做出相应的修改。
+    
+    1.HHHorizontalPagingView 的 allowPullToRefresh 属性设置YES。
+    2.在开始刷新和结束刷新时需要 通知 HHHorizontalPagingView
+    
+      [self.tableView addPullToRefreshOffset:self.pullOffset withActionHandler:^{
+        weakSelf.isRefresh = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshStartNotification object:weakSelf.tableView userInfo:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (!weakSelf.isRefresh) {
+                return;
+            }
+            [weakSelf.tableView.pullToRefreshView stopAnimating];
+            weakSelf.isRefresh = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalScrollViewRefreshEndNotification object:weakSelf.tableView userInfo:nil];
+        });
+    }];
+    
+    3.HHHorizontalPagingView 页面切换时 应该结束 刷新 (否则会有不好的效果)
+    
+    - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear];
+    [self.tableView.pullToRefreshView stopAnimating];
+	}
+	
+	4.
+    
+
+	
+
 	
 	
 	

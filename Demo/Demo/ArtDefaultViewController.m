@@ -148,8 +148,8 @@
 }
 
 // 视图切换完成时调用
-- (void)pagingView:(HHHorizontalPagingView*)pagingView didiSwitchAtIndex:(NSInteger)selectedIndex{
-    NSLog(@"%s",__func__);
+- (void)pagingView:(HHHorizontalPagingView*)pagingView didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex{
+    NSLog(@"%s \n %tu  to  %tu",__func__,aIndex,toIndex);
 }
 
 /*

@@ -11,6 +11,7 @@
 
 NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrollViewRefreshStartNotification";
 NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollViewRefreshEndNotification";
+NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackRefreshEndNotification";
 
 
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
@@ -36,6 +37,7 @@ NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollV
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
 @property (nonatomic, assign) NSInteger          currenPage; // 当前页
+@property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
 @property (nonatomic, assign) BOOL               isRefresh;  // 刷新中
 @property (nonatomic, assign) BOOL               scrollJudge;
 @property (nonatomic, assign) CGFloat            pullOffset;
@@ -291,13 +293,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
     
     // 非当前页被点击
-    for(UIButton *b in self.segmentButtons) {
-        [b setSelected:NO];
-    }
-    [segmentButton setSelected:YES];
-    self.currenPage = segmentButton.tag - pagingButtonTag;
-   
-    
     [self.horizontalCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:clickIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
     
     if(self.currentScrollView.contentOffset.y<-(self.headerViewHeight+self.segmentBarHeight)) {
@@ -310,13 +305,8 @@ static NSInteger pagingScrollViewTag             = 2000;
         [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
     }
     
-    if ([self.delegate respondsToSelector:@selector(pagingView:didiSwitchAtIndex:)]) {
-        [self.delegate pagingView:self didiSwitchAtIndex:clickIndex];
-    }
-    
-    self.currentScrollView = [self scrollViewAtIndex:clickIndex];
-    [self removeCacheScrollView];
-
+    // 视图切换时执行代码
+    [self didSwitchIndex:self.currenPage to:clickIndex];
 }
 
 - (void)adjustOffsetContentView:(UIScrollView *)scrollView {
@@ -425,7 +415,6 @@ static NSInteger pagingScrollViewTag             = 2000;
   
   
     self.currentScrollView = v;
-    self.isRefresh = NO;
     [self adjustOffsetContentView:v];
     return cell;
     
@@ -560,6 +549,29 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
 }
 
+
+// 视图切换时执行代码
+- (void)didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex{
+    
+    if (aIndex == toIndex) {
+        return;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(pagingView:didSwitchIndex:to:)]) {
+        [self.delegate pagingView:self didSwitchIndex:aIndex to:toIndex];
+    }
+    
+    if (self.isRefresh) {
+        self.isRefresh = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
+    }
+    
+    self.currenPage = toIndex;
+    self.currentScrollView = [self scrollViewAtIndex:toIndex];
+    [self setSelectedButPage:toIndex];
+    [self removeCacheScrollView];
+}
+
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
@@ -569,8 +581,8 @@ static NSInteger pagingScrollViewTag             = 2000;
     if ( py <= 0.3 || py >= 0.7) {
         return;
     }
-    
-    NSInteger currentPage = self.currenPage;
+
+    NSInteger currentPage = self.currenSelectedBut;
     if (offsetpage - currentPage > 0) {
         if (py > 0.55) {
            [self setSelectedButPage:currentPage + 1];
@@ -585,19 +597,13 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 
-    if (!self.isScroll) {
+    if (!self.isScroll) { // 是否左右滚动  防止上下滚动的触发
         return;
     }
     
     self.isScroll = NO;
-    CGFloat currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
-    
-    [self setSelectedButPage:currentPage];
-    self.currentScrollView = [self scrollViewAtIndex:currentPage];
-    [self removeCacheScrollView];
-    if ([self.delegate respondsToSelector:@selector(pagingView:didiSwitchAtIndex:)]) {
-        [self.delegate pagingView:self didiSwitchAtIndex:currentPage];
-    }
+    NSInteger currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
+    [self didSwitchIndex:self.currenPage to:currentPage];
 }
 
 - (void)setSelectedButPage:(NSInteger)buttonPage{
@@ -608,7 +614,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             [b setSelected:NO];
         }
     }
-    self.currenPage = buttonPage;
+    self.currenSelectedBut = buttonPage;
 }
 
 - (void)removeCacheScrollView{

@@ -50,6 +50,7 @@ typedef NSUInteger SVPullToRefreshState;
 
 - (void)startAnimating;
 - (void)stopAnimating;
+- (void)stopAnimating:(BOOL)animated;
 
 // deprecated; use setSubtitle:forState: instead
 @property (nonatomic, strong, readonly) UILabel *dateLabel DEPRECATED_ATTRIBUTE;
