@@ -3,6 +3,30 @@
 
 ![演示](http://images2015.cnblogs.com/blog/737816/201611/737816-20161103101004127-1407411995.gif)
 
+
+#注意：
+	类似功能的开源框架有不少，大家在要使用时请谨慎选择。
+		1.为了达到 headerView 与 下方ScrollView 的流畅效果，窜改了headerView的响应者链
+	条，虽然我用一种巧妙的方式接起了点击事件，但是除了点击事件，其它手势无法响应。也就是说 想
+	在 headerView上做轮播图是无法做到的。
+		2.Demo提供了一种下拉刷新的方式，该方式需要对 刷新框架做一些处理，后面会讲到。
+		3.有朋友问如何添加整体下拉刷新，我很抱歉的告诉大家由于该框架的处理方式，整体下拉刷新
+	很难添加。我建议采用一种折中方式，大家都知到微信朋友圈那种刷新方式吧，大家可以考虑做成那种
+	刷新。通过下面的代理方法处理效果即可。
+	- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset;
+	
+向大家推荐另外一个框架 :[YX_UITableView_IN_UITableView]( https://github.com/yixiangboy/YX_UITableView_IN_UITableView)
+	
+	该框架的实现方式大家可以看作者介绍，
+	1.它的 headerView 可以正常响应所有事件，想在 headerView上做轮播图是没有问题的。
+	2.做整体下拉刷新也是没有问题的，而且添加比较方便。
+	问题：1.headerView 向上滑动 会在临界点停住，不会有本框架宛如一体的减速滚动效果。
+		 2.本框架 Demo 中的刷新方式，作者没有处理，大家需要自己看代码进行改造（可能坑比
+		 较多）。
+	
+	
+	
+
 #CocoaPods
 
 通过CocoaPods集成
