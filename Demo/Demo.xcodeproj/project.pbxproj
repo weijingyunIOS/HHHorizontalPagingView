@@ -113,7 +113,10 @@
 		5C33A77A1DB9EABB00E05E6E /* example */ = {
 			isa = PBXGroup;
 			children = (
-				5CB825A81DCB45CB007DFD1D /* SDRefresh */,
+				5CE9F3001CF9729800DB414B /* ViewController.h */,
+				5CE9F3011CF9729800DB414B /* ViewController.m */,
+				5CE9F3451CF9A71800DB414B /* ArtTableViewController.h */,
+				5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */,
 				5C33A7771DB9EAB000E05E6E /* ArtDefaultViewController.h */,
 				5C33A7781DB9EAB000E05E6E /* ArtDefaultViewController.m */,
 				5C33A77E1DB9F4C600E05E6E /* ArtPullViewController.h */,
@@ -173,11 +176,8 @@
 				5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */,
 				5CE9F2FD1CF9729800DB414B /* AppDelegate.h */,
 				5CE9F2FE1CF9729800DB414B /* AppDelegate.m */,
-				5CE9F3001CF9729800DB414B /* ViewController.h */,
-				5CE9F3011CF9729800DB414B /* ViewController.m */,
-				5CE9F3451CF9A71800DB414B /* ArtTableViewController.h */,
-				5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */,
 				5C33A7B81DB9FAC400E05E6E /* SVPullToRefresh */,
+				5CB825A81DCB45CB007DFD1D /* SDRefresh */,
 				5C33A77A1DB9EABB00E05E6E /* example */,
 				5CE9F3061CF9729800DB414B /* Assets.xcassets */,
 				5CE9F3081CF9729800DB414B /* LaunchScreen.storyboard */,
