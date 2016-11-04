@@ -1,7 +1,7 @@
 # HHHorizontalPagingView
 对HHHorizontalPagingView的优化，解决headerView 的点击痛点
 
-![演示](http://images2015.cnblogs.com/blog/737816/201611/737816-20161103101004127-1407411995.gif)
+![演示](http://images2015.cnblogs.com/blog/737816/201611/737816-20161104112045377-1892073173.gif)
 
 
 #注意：
@@ -9,9 +9,8 @@
 		1.为了达到 headerView 与 下方ScrollView 的流畅效果，窜改了headerView的响应者链
 	条，虽然我用一种巧妙的方式接起了点击事件，但是除了点击事件，其它手势无法响应。也就是说 想
 	在 headerView上做轮播图是无法做到的。
-		2.Demo提供了一种下拉刷新的方式，该方式需要对 刷新框架做一些处理，后面会讲到。
-		3.有朋友问如何添加整体下拉刷新，我很抱歉的告诉大家由于该框架的处理方式，整体下拉刷新
-	很难添加。我建议采用一种折中方式，大家都知到微信朋友圈那种刷新方式吧，大家可以考虑做成那种
+		2.Demo提供单独下拉，该方式需要对 刷新框架做一些处理，后面会讲到。
+		3.关于整体下拉刷新，由于悬停效果处理会有很多坑，整体刷新采用微信朋友圈的刷新样式。
 	刷新。通过下面的代理方法处理效果即可。
 	- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset;
 	
@@ -21,7 +20,7 @@
 	1.它的 headerView 可以正常响应所有事件，想在 headerView上做轮播图是没有问题的。
 	2.做整体下拉刷新也是没有问题的，而且添加比较方便。
 	问题：1.headerView 向上滑动 会在临界点停住，不会有本框架宛如一体的减速滚动效果。
-		 2.本框架 Demo 中的刷新方式，作者没有处理，大家需要自己看代码进行改造（可能坑比
+		 2.本框架 Demo 中的 单独下拉刷新，作者没有处理，大家需要自己看代码进行改造（可能坑比
 		 较多）。
 	
 	
@@ -130,7 +129,7 @@
 	界面时的位置，下次创建时还原即可，不过视图的创建和释放都是比较耗性能的，会卡顿主线程。
 	
 	
-###三、下拉刷新的问题
+###三、单独下拉刷新的问题
 	
 	    这种设计视图在刷新处理上有两种方式：一是整体刷新，二是单独刷新。需要更具适用场景进行
     选择。关于整体刷新本框架无法使用常规的刷新控件处理，如需要可以仿微信朋友圈那种刷新处理(会	考虑抽时间在Demo 中加入该功能示例)。而单独刷新则需要对刷新控件做一下处理来实现。
@@ -197,7 +196,39 @@
 	}
 	
 	
+###三、整体下拉刷新 － 微信朋友圈
+    
+    	考虑到本框架，需要左右滑动上下滚动，如果做成常规下拉悬停的刷新方式成本较高，故采用
+    微信朋友圈的刷新方式处理。这类轮子不少，我就直接找了个轮子改改哈。Demo中的
+    SDTimeLineRefreshHeader是从 GSD_WeiXin 中拉出的。
+        刷新框架基本都是为UIScrollView 写的，但实际使用只是监听了 contentOffset 再加上
+    isDragging 属性判断用户是否放手。我在 HHHorizontalPagingView 加了这两个属性在相应
+    地方做了处理，然后就可以直接使用 SDTimeLineRefreshHeader 了。
+    
+    注意：
+    1.//以下属性 用strong 是为了移除监听时scrollView 不为空，注意循环引用。
+	@property (nonatomic, strong) UIView<ArtRefreshViewProtocol> *scrollView;
 	
+	2.添加
+	self.refreshHeader = [SDTimeLineRefreshHeader refreshHeaderWithCenter:CGPointMake(40, -15)];
+    
+    self.refreshHeader.scrollView = (UIView<ArtRefreshViewProtocol> *)self.pagingView;
+    __weak typeof(_refreshHeader) weakHeader = self.refreshHeader;
+    
+    // 1. 加在superview上 避免出现循环引用。
+    // 2. 加在superview上 保证 refreshHeader 在 self.pagingView 上方。
+    [self.pagingView.superview addSubview:self.refreshHeader];
+    
+    [self.refreshHeader setRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [weakHeader endRefreshing];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+        });
+    }];
+
     
 
 	
