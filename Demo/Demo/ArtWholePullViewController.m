@@ -9,10 +9,12 @@
 #import "ArtWholePullViewController.h"
 #import "JYPagingView.h"
 #import "ArtTableViewController.h"
+#import "SDTimeLineRefreshHeader.h"
 
 @interface ArtWholePullViewController ()<HHHorizontalPagingViewDelegate>
 
 @property (nonatomic, strong) HHHorizontalPagingView *pagingView;
+@property (nonatomic, strong) SDTimeLineRefreshHeader *refreshHeader;
 
 @end
 
@@ -23,6 +25,31 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
     [self.pagingView reload];
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    if (self.refreshHeader != nil) {
+        return;
+    }
+    self.refreshHeader = [SDTimeLineRefreshHeader refreshHeaderWithCenter:CGPointMake(40, -15)];
+    
+    self.refreshHeader.scrollView = (UIView<ArtRefreshViewProtocol> *)self.pagingView;
+    __weak typeof(_refreshHeader) weakHeader = self.refreshHeader;
+    
+    // 1. 加在superview上 避免出现循环引用。
+    // 2. 加在superview上 保证 refreshHeader 在 self.pagingView 上方。
+    [self.pagingView.superview addSubview:self.refreshHeader];
+    
+    [self.refreshHeader setRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [weakHeader endRefreshing];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+        });
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -77,7 +104,7 @@
     [headerView addSubview:imageView];
     
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeTop multiplier:1 constant:-100]];
+    [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeTop multiplier:1 constant:-150]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [headerView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
@@ -86,7 +113,7 @@
     [headerView whenTapped:^{
         [weakSelf showText:@"headerView click"];
     }];
- 
+
     return headerView;
 }
 
@@ -129,18 +156,6 @@
     NSLog(@"%s \n %tu  to  %tu",__func__,aIndex,toIndex);
 }
 
-/*
- 与 magnifyTopConstraint 属性相对应  下拉时如需要放大，则传入的图片的上边距约束
- 考虑到开发中很少使用原生约束，故放开代理方法 用于用户自行根据 偏移处理相应效果
- 如果设置了 magnifyTopConstraint 改方法将不会被调用
- 
- */
-- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset{
-    //    NSLog(@"偏移%f",offset);
-//    self.topConstraint.constant = offset;
-    
-}
-
 #pragma mark - 懒加载
 - (HHHorizontalPagingView *)pagingView{
     if (!_pagingView) {
@@ -148,7 +163,7 @@
         _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
         _pagingView.segmentTopSpace = 20;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
-        //        _pagingView.maxCacheCout = 5.;
+        _pagingView.maxCacheCout = 5.;
         [self.view addSubview:_pagingView];
     }
     return _pagingView;

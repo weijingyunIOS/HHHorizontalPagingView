@@ -78,6 +78,11 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 @property (nonatomic, assign) BOOL allowPullToRefresh;
 @property (nonatomic, assign, readonly) CGFloat pullOffset;
 
+// 用于整体下拉刷新
+@property (nonatomic, assign) CGPoint contentOffset;
+@property (nonatomic, assign) BOOL isDragging;
+
+
 /**
  *  缓存视图数 默认是 3
  */

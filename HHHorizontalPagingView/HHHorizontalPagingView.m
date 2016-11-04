@@ -458,7 +458,7 @@ static NSInteger pagingScrollViewTag             = 2000;
                        context:(void *)context {
     
     if(context == &HHHorizontalPagingViewPanContext) {
-        
+        self.isDragging = YES;
         self.horizontalCollectionView.scrollEnabled = YES;
         UIGestureRecognizerState state = [change[NSKeyValueChangeNewKey] integerValue];
         //failed说明是点击事件
@@ -470,6 +470,8 @@ static NSInteger pagingScrollViewTag             = 2000;
             }
             self.currentTouchView = nil;
             self.currentTouchButton = nil;
+        }else if (state == UIGestureRecognizerStateCancelled || state == UIGestureRecognizerStateEnded) {
+            self.isDragging = NO;
         }
         
     }else if (context == &HHHorizontalPagingViewScrollContext) {
@@ -544,8 +546,8 @@ static NSInteger pagingScrollViewTag             = 2000;
         
         if (self.headerOriginYConstraint.constant > 0) {
       
-            if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
-                
+            self.contentOffset = CGPointMake(0, -self.headerOriginYConstraint.constant);
+            if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                 [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
             }
         }

@@ -27,7 +27,7 @@
     [super viewDidLoad];
     self.dataArray = @[@{kClass : [ArtDefaultViewController class],kTitle : @"下拉放大图片Demo"},
                        @{kClass : [ArtPullViewController class],kTitle : @"单独下拉刷新"},
-                       @{kClass : [ArtWholePullViewController class],kTitle : @"整体下拉刷新－待完成"}];
+                       @{kClass : [ArtWholePullViewController class],kTitle : @"整体下拉刷新－微信朋友圈"}];
 }
 
 - (void)loadView{
