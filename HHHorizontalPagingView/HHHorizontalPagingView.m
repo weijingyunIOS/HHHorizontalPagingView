@@ -664,24 +664,18 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)removeCacheScrollView{
-//    NSLog(@"--------%tu",self.contentViewArray.count);
+    
     if (self.contentViewArray.count <= self.maxCacheCout) {
         return;
     }
-    
+    [self releaseCache];
+}
+
+- (void)releaseCache{
     NSInteger currentCount = self.currentScrollView.tag;
     [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull scrollView, NSUInteger idx, BOOL * _Nonnull stop) {
         if (labs(scrollView.tag - currentCount) > 1) {
             [self removeScrollView:scrollView];
-        }
-    }];
-//    NSLog(@"++++++%tu",self.contentViewArray.count);
-}
-
-- (void)releaseCache{
-    [self.contentViewArray enumerateObjectsUsingBlock:^(UIScrollView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj != self.currentScrollView) {
-            [self removeScrollView:obj];
         }
     }];
 }
