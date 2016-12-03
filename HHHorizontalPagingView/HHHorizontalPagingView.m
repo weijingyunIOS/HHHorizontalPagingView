@@ -10,6 +10,7 @@
 #import "DynamicItem.h"
 #import <objc/runtime.h>
 #import "UIView+WhenTappedBlocks.h"
+#import "UIScrollView+Dragging.h"
 
 NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrollViewRefreshStartNotification";
 NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollViewRefreshEndNotification";
@@ -17,8 +18,6 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 
 
 #pragma mark - ScrollView 分类用于刷新处理
-static char khhh_isRefresh;
-static char khhh_startRefresh;
 @interface UIScrollView (HHHorizontalPagingView)
 
 @property (nonatomic, assign) BOOL hhh_isRefresh;  // 刷新中
@@ -30,19 +29,19 @@ static char khhh_startRefresh;
 @implementation UIScrollView (HHHorizontalPagingView)
 
 - (void)setHhh_isRefresh:(BOOL)hhh_isRefresh{
-    objc_setAssociatedObject(self,&khhh_isRefresh,[NSNumber numberWithBool:hhh_isRefresh],OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self,@selector(hhh_isRefresh),[NSNumber numberWithBool:hhh_isRefresh],OBJC_ASSOCIATION_RETAIN);
 }
 
 - (BOOL)hhh_isRefresh{
-    return [objc_getAssociatedObject(self, &khhh_isRefresh) boolValue];
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
 - (void)setHhh_startRefresh:(BOOL)hhh_startRefresh{
-    objc_setAssociatedObject(self,&khhh_startRefresh,[NSNumber numberWithBool:hhh_startRefresh],OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self,@selector(hhh_startRefresh),[NSNumber numberWithBool:hhh_startRefresh],OBJC_ASSOCIATION_RETAIN);
 }
 
 - (BOOL)hhh_startRefresh{
-    return [objc_getAssociatedObject(self, &khhh_startRefresh) boolValue];
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
 @end
@@ -435,6 +434,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     
     // 手势模拟 兼容整体下来刷新
     self.isDragging = !(pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed);
+    [self.currentScrollView setDragging:self.isDragging];
     
     // 偏移计算
     CGPoint point = [pan translationInView:self.headerView];
@@ -442,20 +442,25 @@ static NSInteger pagingScrollViewTag             = 2000;
     CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
     CGFloat offsety = contentOffset.y - point.y * (1/contentOffset.y * border * 0.8);
     
-    // 单独下拉刷新，无法处理self.currentScrollView.isDragging的值，故禁止headerView手势触发下拉刷新
-    if (self.allowPullToRefresh && offsety <= border) {
-        return;
-    }
+//    // 单独下拉刷新，无法处理self.currentScrollView.isDragging的值，故禁止headerView手势触发下拉刷新
+//    if (self.allowPullToRefresh && offsety <= border) {
+//        return;
+//    }
     
     self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
     
     
     if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed) {
         if (contentOffset.y <= border) {
+            // 如果处于刷新
+            if (self.currentScrollView.hhh_isRefresh) {
+                return;
+            }
             [UIView animateWithDuration:0.35 animations:^{
                 self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, border);
                 [self layoutIfNeeded];
             }];
+
         }else{
             CGFloat velocity = [pan velocityInView:self.headerView].y;
             [self deceleratingAnimator:velocity];

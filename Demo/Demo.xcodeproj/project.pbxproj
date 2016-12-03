@@ -13,6 +13,7 @@
 		5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A7BB1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m */; };
 		5C33A7BF1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C33A7BD1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m */; };
 		5C68B8B41DF2B9BC00F1C693 /* DynamicItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68B8B31DF2B9BC00F1C693 /* DynamicItem.m */; };
+		5C68B8B71DF2CFD800F1C693 /* UIScrollView+Dragging.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68B8B61DF2CFD800F1C693 /* UIScrollView+Dragging.m */; };
 		5CB825AF1DCB45CB007DFD1D /* SDBaseRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB825AA1DCB45CB007DFD1D /* SDBaseRefreshView.m */; };
 		5CB825B11DCB45CB007DFD1D /* SDTimeLineRefreshHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB825AE1DCB45CB007DFD1D /* SDTimeLineRefreshHeader.m */; };
 		5CCDB9F61DCB3AA9000536D2 /* ArtWholePullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */; };
@@ -58,6 +59,8 @@
 		5C33A7BD1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
 		5C68B8B21DF2B9BC00F1C693 /* DynamicItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicItem.h; sourceTree = "<group>"; };
 		5C68B8B31DF2B9BC00F1C693 /* DynamicItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicItem.m; sourceTree = "<group>"; };
+		5C68B8B51DF2CFD800F1C693 /* UIScrollView+Dragging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+Dragging.h"; sourceTree = "<group>"; };
+		5C68B8B61DF2CFD800F1C693 /* UIScrollView+Dragging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+Dragging.m"; sourceTree = "<group>"; };
 		5CB825A91DCB45CB007DFD1D /* SDBaseRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDBaseRefreshView.h; sourceTree = "<group>"; };
 		5CB825AA1DCB45CB007DFD1D /* SDBaseRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDBaseRefreshView.m; sourceTree = "<group>"; };
 		5CB825AD1DCB45CB007DFD1D /* SDTimeLineRefreshHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDTimeLineRefreshHeader.h; sourceTree = "<group>"; };
@@ -227,6 +230,8 @@
 				5C68B8B31DF2B9BC00F1C693 /* DynamicItem.m */,
 				5CE9F3371CF9737300DB414B /* UIView+WhenTappedBlocks.h */,
 				5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */,
+				5C68B8B51DF2CFD800F1C693 /* UIScrollView+Dragging.h */,
+				5C68B8B61DF2CFD800F1C693 /* UIScrollView+Dragging.m */,
 			);
 			name = HHHorizontalPagingView;
 			path = ../../HHHorizontalPagingView;
@@ -366,6 +371,7 @@
 				5CE9F3021CF9729800DB414B /* ViewController.m in Sources */,
 				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				5C68B8B71DF2CFD800F1C693 /* UIScrollView+Dragging.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
 				5C33A7BF1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m in Sources */,
 				5CB825B11DCB45CB007DFD1D /* SDTimeLineRefreshHeader.m in Sources */,
