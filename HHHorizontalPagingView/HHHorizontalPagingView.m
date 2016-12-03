@@ -483,7 +483,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     CGFloat maxOffset = self.currentScrollView.contentSize.height - self.currentScrollView.bounds.size.height;
     inertialBehavior.action = ^{
         
-        CGPoint contentOffset = self.currentScrollView.contentOffset;
+        CGPoint contentOffset = weakSelf.currentScrollView.contentOffset;
         CGFloat speed = [weakSelf.inertialBehavior linearVelocityForItem:item].y;
         CGFloat offset = contentOffset.y -  speed;
         
@@ -508,7 +508,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             }];
         }else{
             
-            self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+            weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
         }
     };
     self.inertialBehavior = inertialBehavior;
@@ -858,6 +858,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
     return _maxCacheCout;
 }
+
 
 @end
 
