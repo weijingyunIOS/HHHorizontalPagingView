@@ -42,4 +42,20 @@
     return dragging || [self swizzled_isDragging];
 }
 
+- (void)setHhh_isRefresh:(BOOL)hhh_isRefresh{
+    objc_setAssociatedObject(self,@selector(hhh_isRefresh),[NSNumber numberWithBool:hhh_isRefresh],OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)hhh_isRefresh{
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setHhh_startRefresh:(BOOL)hhh_startRefresh{
+    objc_setAssociatedObject(self,@selector(hhh_startRefresh),[NSNumber numberWithBool:hhh_startRefresh],OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)hhh_startRefresh{
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 @end

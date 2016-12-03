@@ -16,37 +16,6 @@ NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrol
 NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollViewRefreshEndNotification";
 NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackRefreshEndNotification";
 
-
-#pragma mark - ScrollView 分类用于刷新处理
-@interface UIScrollView (HHHorizontalPagingView)
-
-@property (nonatomic, assign) BOOL hhh_isRefresh;  // 刷新中
-@property (nonatomic, assign) BOOL hhh_startRefresh; // 开始刷新
-
-
-@end
-
-@implementation UIScrollView (HHHorizontalPagingView)
-
-- (void)setHhh_isRefresh:(BOOL)hhh_isRefresh{
-    objc_setAssociatedObject(self,@selector(hhh_isRefresh),[NSNumber numberWithBool:hhh_isRefresh],OBJC_ASSOCIATION_RETAIN);
-}
-
-- (BOOL)hhh_isRefresh{
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
-
-- (void)setHhh_startRefresh:(BOOL)hhh_startRefresh{
-    objc_setAssociatedObject(self,@selector(hhh_startRefresh),[NSNumber numberWithBool:hhh_startRefresh],OBJC_ASSOCIATION_RETAIN);
-}
-
-- (BOOL)hhh_startRefresh{
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
-
-@end
-
-#pragma mark - HHHorizontalPagingView
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UIView             *headerView;
@@ -421,7 +390,25 @@ static NSInteger pagingScrollViewTag             = 2000;
         return;
     }
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    pan.delegate = self;
     [self.headerView addGestureRecognizer:pan];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
+    
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
+        CGPoint point = [pan translationInView:self.headerView];
+        if (fabs(point.y)  <=  fabs(point.x)) {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+    return YES;
 }
 
 - (void)pan:(UIPanGestureRecognizer*)pan{
