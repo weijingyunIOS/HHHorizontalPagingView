@@ -140,13 +140,22 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)pan:(UIPanGestureRecognizer*)pan{
     
-    CGPoint point = [pan translationInView:self.headerView ] ;
+    CGPoint point = [pan translationInView:self.headerView];
     [self rollingPointy:point.y];
-
     if (pan.state == UIGestureRecognizerStateEnded) {
-        CGFloat velocity = [pan velocityInView:self.headerView].y;
-        [self deceleratingAnimator:velocity];
-        NSLog(@"--%f",velocity);
+        
+        
+        CGPoint contentOffset = self.currentScrollView.contentOffset;
+        CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
+        if (contentOffset.y <= border) {
+            [UIView animateWithDuration:0.35 animations:^{
+                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, -286);
+                [self layoutIfNeeded];
+            }];
+        }else{
+            CGFloat velocity = [pan velocityInView:self.headerView].y;
+            [self deceleratingAnimator:velocity];
+        }
     }
     
     // 清零防止偏移累计
@@ -158,42 +167,44 @@ static NSInteger pagingScrollViewTag             = 2000;
     
     CGPoint contentOffset = self.currentScrollView.contentOffset;
     CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
-    CGFloat maxsetH = self.currentScrollView.contentSize.height - self.frame.size.height;
-    CGFloat offsety = contentOffset.y - pointy;
-    if (offsety < border) {
-        NSLog(@"%f",pointy);
-        if (pointy <= 5) {
-            offsety = contentOffset.y - 0.3;
-        }else{
-            [self.animator removeBehavior:self.inertialBehavior];
-            [UIView animateWithDuration:2 animations:^{
-                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, -286);
-            }];
-        }
-        
-    }else if (offsety >= maxsetH) {
-        offsety = maxsetH;
-        [self.animator removeBehavior:self.inertialBehavior];
-    }
+    CGFloat offsety = contentOffset.y - pointy * (1/contentOffset.y * border * 0.8);
     self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
 }
 
 - (void)deceleratingAnimator:(CGFloat)velocity{
     
-    velocity = velocity * 0.05;
-    // when pan.state == UIGestureRecognizerStateEnded
+    if (self.inertialBehavior != nil) {
+        [self.animator removeBehavior:self.inertialBehavior];
+    }
     DynamicItem *item = [[DynamicItem alloc] init];
     item.center = CGPointMake(0, 0);
     // velocity是在手势结束的时候获取的竖直方向的手势速度
     UIDynamicItemBehavior *inertialBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[ item ]];
-    [inertialBehavior addLinearVelocity:CGPointMake(0, velocity) forItem:item];
+    [inertialBehavior addLinearVelocity:CGPointMake(0, velocity * 0.025) forItem:item];
     // 通过尝试取2.0比较像系统的效果
-    inertialBehavior.resistance = fabs(0.12 * velocity);
-    inertialBehavior.angularResistance = fabs(0.05 * inertialBehavior.resistance);
+    inertialBehavior.resistance = 2;
+    
+    __weak typeof(self)weakSelf = self;
     inertialBehavior.action = ^{
-        
-        CGFloat pointy = item.center.y;
-        [self rollingPointy:pointy];
+        CGPoint contentOffset = self.currentScrollView.contentOffset;
+        CGFloat speed = [weakSelf.inertialBehavior linearVelocityForItem:item].y;
+        CGFloat offset = contentOffset.y -  speed;
+        if (speed >= -0.2) {
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+        }else if (offset + self.frame.size.height >= weakSelf.currentScrollView.contentSize.height){
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+            offset = self.currentScrollView.contentSize.height - self.currentScrollView.bounds.size.height;
+            self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - velocity * 0.05);
+            [UIView animateWithDuration:0.5 animations:^{
+                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+                [self layoutIfNeeded];
+            }];
+            
+        }else{
+            self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+        }
     };
     self.inertialBehavior = inertialBehavior;
     [self.animator addBehavior:inertialBehavior];
