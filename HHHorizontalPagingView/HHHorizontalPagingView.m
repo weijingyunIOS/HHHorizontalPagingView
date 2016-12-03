@@ -185,24 +185,33 @@ static NSInteger pagingScrollViewTag             = 2000;
     inertialBehavior.resistance = 2;
     
     __weak typeof(self)weakSelf = self;
+    CGFloat maxOffset = self.currentScrollView.contentSize.height - self.currentScrollView.bounds.size.height;
     inertialBehavior.action = ^{
+        
         CGPoint contentOffset = self.currentScrollView.contentOffset;
         CGFloat speed = [weakSelf.inertialBehavior linearVelocityForItem:item].y;
         CGFloat offset = contentOffset.y -  speed;
+        
         if (speed >= -0.2) {
-            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
-            weakSelf.inertialBehavior = nil;
-        }else if (offset + self.frame.size.height >= weakSelf.currentScrollView.contentSize.height){
-            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
-            weakSelf.inertialBehavior = nil;
-            offset = self.currentScrollView.contentSize.height - self.currentScrollView.bounds.size.height;
-            self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y - velocity * 0.05);
-            [UIView animateWithDuration:0.5 animations:^{
-                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
-                [self layoutIfNeeded];
-            }];
             
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+        }else if (offset >= maxOffset){
+            
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+            offset = maxOffset;
+            [UIView animateWithDuration:0.2 animations:^{
+                weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset - speed);
+                [weakSelf layoutIfNeeded];
+            } completion:^(BOOL finished) {
+                [UIView animateWithDuration:0.25 animations:^{
+                    weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+                    [weakSelf layoutIfNeeded];
+                }];
+            }];
         }else{
+            
             self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
         }
     };
