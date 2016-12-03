@@ -164,6 +164,7 @@
         _pagingView.segmentTopSpace = 20;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
         _pagingView.maxCacheCout = 5.;
+        _pagingView.isGesturesSimulate = YES;
         [self.view addSubview:_pagingView];
     }
     return _pagingView;

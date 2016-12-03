@@ -7,6 +7,7 @@
 //
 
 #import "HHHorizontalPagingView.h"
+#import "DynamicItem.h"
 #import <objc/runtime.h>
 #import "UIView+WhenTappedBlocks.h"
 
@@ -74,6 +75,11 @@ static char khhh_startRefresh;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
+/**
+ *  用于模拟scrollView滚动
+ */
+@property (nonatomic, strong) UIDynamicAnimator  *animator;
+@property (nonatomic, strong) UIDynamicItemBehavior *inertialBehavior;
 
 /**
  *  代理
@@ -191,6 +197,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         
         self.headerSizeHeightConstraint = [NSLayoutConstraint constraintWithItem:self.headerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:self.headerViewHeight];
         [self.headerView addConstraint:self.headerSizeHeightConstraint];
+        [self addGestureRecognizerAtHeaderView];
     }
 }
 
@@ -362,6 +369,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     });
 }
 
+#pragma mark - 对headerView触发滚动的两种处理
 - (BOOL)pointInside:(CGPoint)point withEvent:(nullable UIEvent *)event {
     if(point.x < 10) {
         return NO;
@@ -376,6 +384,11 @@ static NSInteger pagingScrollViewTag             = 2000;
         return nil;
     }
     
+    if (self.isGesturesSimulate) {
+        return view;
+    }
+    
+    // 如果处于刷新中，作用在headerView上的手势不响应在currentScrollView上
     if (self.currentScrollView.hhh_isRefresh) {
         return view;
     }
@@ -402,6 +415,97 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
     return view;
 }
+
+- (void)addGestureRecognizerAtHeaderView{
+    
+    if (self.isGesturesSimulate == NO) {
+        return;
+    }
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    [self.headerView addGestureRecognizer:pan];
+}
+
+- (void)pan:(UIPanGestureRecognizer*)pan{
+    
+    CGPoint point = [pan translationInView:self.headerView];
+    // 手势模拟 兼容整体下来刷新
+    self.isDragging = !(pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed);
+    [self rollingPointy:point.y]; // 必须在self.isDragging 下面
+    
+    if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed) {
+        CGPoint contentOffset = self.currentScrollView.contentOffset;
+        CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
+        if (contentOffset.y <= border) {
+            [UIView animateWithDuration:0.35 animations:^{
+                self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, border);
+                [self layoutIfNeeded];
+            }];
+        }else{
+            CGFloat velocity = [pan velocityInView:self.headerView].y;
+            [self deceleratingAnimator:velocity];
+        }
+    }
+    // 清零防止偏移累计
+    [pan setTranslation:CGPointZero inView:self.headerView];
+    
+}
+
+- (void)rollingPointy:(CGFloat)pointy{
+    
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
+    CGFloat offsety = contentOffset.y - pointy * (1/contentOffset.y * border * 0.8);
+    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
+}
+
+- (void)deceleratingAnimator:(CGFloat)velocity{
+    
+    if (self.inertialBehavior != nil) {
+        [self.animator removeBehavior:self.inertialBehavior];
+    }
+    DynamicItem *item = [[DynamicItem alloc] init];
+    item.center = CGPointMake(0, 0);
+    // velocity是在手势结束的时候获取的竖直方向的手势速度
+    UIDynamicItemBehavior *inertialBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[ item ]];
+    [inertialBehavior addLinearVelocity:CGPointMake(0, velocity * 0.025) forItem:item];
+    // 通过尝试取2.0比较像系统的效果
+    inertialBehavior.resistance = 2;
+    
+    __weak typeof(self)weakSelf = self;
+    CGFloat maxOffset = self.currentScrollView.contentSize.height - self.currentScrollView.bounds.size.height;
+    inertialBehavior.action = ^{
+        
+        CGPoint contentOffset = self.currentScrollView.contentOffset;
+        CGFloat speed = [weakSelf.inertialBehavior linearVelocityForItem:item].y;
+        CGFloat offset = contentOffset.y -  speed;
+        
+        if (speed >= -0.2) {
+            
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+        }else if (offset >= maxOffset){
+            
+            [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
+            weakSelf.inertialBehavior = nil;
+            offset = maxOffset;
+            [UIView animateWithDuration:0.2 animations:^{
+                weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset - speed);
+                [weakSelf layoutIfNeeded];
+            } completion:^(BOOL finished) {
+                [UIView animateWithDuration:0.25 animations:^{
+                    weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+                    [weakSelf layoutIfNeeded];
+                }];
+            }];
+        }else{
+            
+            self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset);
+        }
+    };
+    self.inertialBehavior = inertialBehavior;
+    [self.animator addBehavior:inertialBehavior];
+}
+
 
 #pragma mark - Setter
 - (void)setSegmentButtonSize:(CGSize)segmentButtonSize {
@@ -545,8 +649,9 @@ static NSInteger pagingScrollViewTag             = 2000;
         
         
         if (self.headerOriginYConstraint.constant > 0) {
-      
+            
             self.contentOffset = CGPointMake(0, -self.headerOriginYConstraint.constant);
+            NSLog(@"contentOffset %f",self.contentOffset.y);
             if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                 [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
             }
@@ -718,6 +823,13 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 
 #pragma mark - 懒加载
+- (UIDynamicAnimator *)animator{
+    if (!_animator) {
+        _animator = [[UIDynamicAnimator alloc] init];
+    }
+    return _animator;
+}
+
 - (NSMutableArray *)segmentButtonConstraintArray{
     if (!_segmentButtonConstraintArray) {
         _segmentButtonConstraintArray = [NSMutableArray array];

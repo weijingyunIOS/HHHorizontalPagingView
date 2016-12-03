@@ -169,6 +169,7 @@
         CGSize size = [UIScreen mainScreen].bounds.size;
         _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
         _pagingView.segmentTopSpace = 20;
+        _pagingView.isGesturesSimulate = YES;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
         //        _pagingView.maxCacheCout = 5.;
         [self.view addSubview:_pagingView];

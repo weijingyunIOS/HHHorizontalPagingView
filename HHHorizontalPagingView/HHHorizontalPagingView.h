@@ -52,7 +52,6 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 
 @end
 
-@class HHSegmentView;
 
 @interface HHHorizontalPagingView : UIView
 
@@ -60,6 +59,13 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
  *  segment据顶部的距离
  */
 @property (nonatomic, assign) CGFloat segmentTopSpace;
+
+/**
+ *  是否使用手势模拟 默认 NO
+ *  YES ： 会在headerView上添加手势，模拟scorlView 的减速滚动等（效果接近系统）
+ *  NO  :  拦截响应view实现，效果最好，但是headerView响应链断裂
+ */
+@property (nonatomic, assign) BOOL isGesturesSimulate;
 
 /**
  *  允许下拉刷新 默认为NO
