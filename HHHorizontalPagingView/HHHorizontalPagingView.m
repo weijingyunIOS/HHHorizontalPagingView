@@ -633,7 +633,6 @@ static NSInteger pagingScrollViewTag             = 2000;
                 
                 if (self.currentScrollView.contentOffset.y >= -headerViewHeight -  self.segmentBarHeight) {
                     self.currentScrollView.hhh_startRefresh = NO;
-                    NSLog(@"hhh_startRefresh = NO %f",deltaY);
                 }
                 self.headerOriginYConstraint.constant = 0;
             }
@@ -652,7 +651,6 @@ static NSInteger pagingScrollViewTag             = 2000;
                 } else{
                     self.currentScrollView.hhh_startRefresh = YES;
                     self.headerOriginYConstraint.constant = 0;
-                    NSLog(@"hhh_startRefresh = YES %f",deltaY);
                 }
             }
             
@@ -662,7 +660,6 @@ static NSInteger pagingScrollViewTag             = 2000;
         if (self.headerOriginYConstraint.constant > 0) {
             
             self.contentOffset = CGPointMake(0, -self.headerOriginYConstraint.constant);
-            NSLog(@"contentOffset %f",self.contentOffset.y);
             if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
                 [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
             }
