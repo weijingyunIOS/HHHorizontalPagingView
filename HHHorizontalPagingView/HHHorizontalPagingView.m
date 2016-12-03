@@ -441,14 +441,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     CGPoint contentOffset = self.currentScrollView.contentOffset;
     CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
     CGFloat offsety = contentOffset.y - point.y * (1/contentOffset.y * border * 0.8);
-    
-//    // 单独下拉刷新，无法处理self.currentScrollView.isDragging的值，故禁止headerView手势触发下拉刷新
-//    if (self.allowPullToRefresh && offsety <= border) {
-//        return;
-//    }
-    
     self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
-    
     
     if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed) {
         if (contentOffset.y <= border) {
@@ -456,12 +449,14 @@ static NSInteger pagingScrollViewTag             = 2000;
             if (self.currentScrollView.hhh_isRefresh) {
                 return;
             }
+            // 模拟弹回效果
             [UIView animateWithDuration:0.35 animations:^{
                 self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, border);
                 [self layoutIfNeeded];
             }];
 
         }else{
+            // 模拟减速滚动效果
             CGFloat velocity = [pan velocityInView:self.headerView].y;
             [self deceleratingAnimator:velocity];
         }
@@ -501,6 +496,7 @@ static NSInteger pagingScrollViewTag             = 2000;
             [weakSelf.animator removeBehavior:weakSelf.inertialBehavior];
             weakSelf.inertialBehavior = nil;
             offset = maxOffset;
+            // 模拟减速滚动到scrollView最底部时，先拉一点再弹回的效果
             [UIView animateWithDuration:0.2 animations:^{
                 weakSelf.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offset - speed);
                 [weakSelf layoutIfNeeded];
