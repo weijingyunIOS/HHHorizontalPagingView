@@ -427,14 +427,30 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)pan:(UIPanGestureRecognizer*)pan{
     
-    CGPoint point = [pan translationInView:self.headerView];
+    // 如果处于刷新中，作用在headerView上的手势不响应
+    if (self.currentScrollView.hhh_isRefresh) {
+        return;
+    }
+    
+    
     // 手势模拟 兼容整体下来刷新
     self.isDragging = !(pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed);
-    [self rollingPointy:point.y]; // 必须在self.isDragging 下面
+    
+    // 偏移计算
+    CGPoint point = [pan translationInView:self.headerView];
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
+    CGFloat offsety = contentOffset.y - point.y * (1/contentOffset.y * border * 0.8);
+    
+    // 单独下拉刷新，无法处理self.currentScrollView.isDragging的值，故禁止headerView手势触发下拉刷新
+    if (self.allowPullToRefresh && offsety <= border) {
+        return;
+    }
+    
+    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
+    
     
     if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateFailed) {
-        CGPoint contentOffset = self.currentScrollView.contentOffset;
-        CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
         if (contentOffset.y <= border) {
             [UIView animateWithDuration:0.35 animations:^{
                 self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, border);
@@ -448,14 +464,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     // 清零防止偏移累计
     [pan setTranslation:CGPointZero inView:self.headerView];
     
-}
-
-- (void)rollingPointy:(CGFloat)pointy{
-    
-    CGPoint contentOffset = self.currentScrollView.contentOffset;
-    CGFloat border = - self.headerViewHeight - [self.delegate segmentHeightInPagingView:self];
-    CGFloat offsety = contentOffset.y - pointy * (1/contentOffset.y * border * 0.8);
-    self.currentScrollView.contentOffset = CGPointMake(contentOffset.x, offsety);
 }
 
 - (void)deceleratingAnimator:(CGFloat)velocity{
@@ -624,6 +632,7 @@ static NSInteger pagingScrollViewTag             = 2000;
                 
                 if (self.currentScrollView.contentOffset.y >= -headerViewHeight -  self.segmentBarHeight) {
                     self.currentScrollView.hhh_startRefresh = NO;
+                    NSLog(@"hhh_startRefresh = NO %f",deltaY);
                 }
                 self.headerOriginYConstraint.constant = 0;
             }
@@ -642,6 +651,7 @@ static NSInteger pagingScrollViewTag             = 2000;
                 } else{
                     self.currentScrollView.hhh_startRefresh = YES;
                     self.headerOriginYConstraint.constant = 0;
+                    NSLog(@"hhh_startRefresh = YES %f",deltaY);
                 }
             }
             
