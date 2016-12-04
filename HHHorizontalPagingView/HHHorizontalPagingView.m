@@ -686,6 +686,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         if (obj == scrollView) {
             scrollView.hhh_startRefresh = NO;
             scrollView.hhh_isRefresh = NO;
+            [scrollView setDragging:NO];
             *stop = YES;
         }
     }];
@@ -706,6 +707,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     if (oldScrollView.hhh_isRefresh) {
         oldScrollView.hhh_startRefresh = NO;
         oldScrollView.hhh_isRefresh = NO;
+        [oldScrollView setDragging:NO];
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
     }
     
