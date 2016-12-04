@@ -11,7 +11,7 @@
 @interface UIScrollView (Dragging)
 
 @property (nonatomic, assign) BOOL hhh_isRefresh;  // 刷新中
-@property (nonatomic, assign) BOOL hhh_startRefresh; // 开始刷新
+@property (nonatomic, assign) BOOL hhh_startRefresh; // 开始刷新 保证下拉时不触发headView
 - (void)setDragging:(BOOL)dragging;
 
 @end
