@@ -96,10 +96,12 @@
 
 - (void)but1Click{
     NSLog(@"%s",__func__);
+    [self showText:@"but1Click"];
 }
 
 - (void)but2Click{
     NSLog(@"%s",__func__);
+    [self showText:@"but2Click"];
 }
 
 //segmentButtons
