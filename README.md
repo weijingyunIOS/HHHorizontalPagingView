@@ -1,9 +1,12 @@
 # HHHorizontalPagingView
-对HHHorizontalPagingView的优化，解决headerView 的点击痛点
 
 ![演示](http://images2015.cnblogs.com/blog/737816/201612/737816-20161206111835101-2099066825.gif)
 
+
 #大的更新（1.1.1）
+
+[可以看看简书介绍](http://www.jianshu.com/p/6897113b3e9f)
+
 	   最新版采用手势模拟scrollView弹簧及减速效果，解决了之前篡改响应链的痛点
 	完美兼容之前版本，设置 isGesturesSimulate 属性为YES就可以使用，模拟效果
 	接近系统效果，事件响应也不会有问题，只在headerView加了拖拽手势，大家可以
