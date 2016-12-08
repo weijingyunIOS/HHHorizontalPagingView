@@ -114,10 +114,11 @@ static NSInteger pagingScrollViewTag             = 2000;
     self.segmentBarHeight            = [self.delegate segmentHeightInPagingView:self];
     [self configureHeaderView];
     [self configureSegmentView];
-    // 防止不友好动画
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.horizontalCollectionView reloadData];
-    });
+    
+    // 防止该section 是计算得出会改变导致后面崩溃
+    NSInteger section = [self.delegate numberOfSectionsInPagingView:self];
+    [self registCellForm:0 to:section];
+    [self.horizontalCollectionView reloadData];
 }
 
 // 注册cell
@@ -534,11 +535,11 @@ static NSInteger pagingScrollViewTag             = 2000;
     // 如果为空表示 v还没有响应者，在部分机型上出现该问题，情况不明先这么看看
       [cell.contentView addSubview:vc.view];
       cell.tag = v.tag;
-      CGFloat scrollViewHeight = vc.view.frame.size.height;
+      
       vc.view.translatesAutoresizingMaskIntoConstraints = NO;
       [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
       [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
-      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:scrollViewHeight == 0 ? 0 : -(cell.contentView.frame.size.height-vc.view.frame.size.height)]];
+      [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
       [cell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:vc.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
 
      [cell layoutIfNeeded];

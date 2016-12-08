@@ -22,18 +22,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     self.view.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
     [self.pagingView reload];
-}
-
-- (void)viewWillAppear:(BOOL)animated{
-    [self.navigationController setNavigationBarHidden:YES animated:animated];
-    [super viewWillAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated{
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
-    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -61,6 +52,7 @@
     vc.index = index;
     vc.allowPullToRefresh = YES;
     vc.pullOffset = self.pagingView.pullOffset;
+    vc.fillHight = self.pagingView.segmentTopSpace + 36;
     return (UIScrollView *)vc.view;
 }
 
@@ -137,8 +129,8 @@
 - (HHHorizontalPagingView *)pagingView{
     if (!_pagingView) {
         CGSize size = [UIScreen mainScreen].bounds.size;
-        _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
-        _pagingView.segmentTopSpace = 20;
+        _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height - 64) delegate:self];
+        _pagingView.segmentTopSpace = 1;
         _pagingView.allowPullToRefresh = YES;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
         _pagingView.maxCacheCout = 5.;

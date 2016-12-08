@@ -14,5 +14,6 @@
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, assign) BOOL allowPullToRefresh;
 @property (nonatomic, assign) CGFloat pullOffset;
+@property (nonatomic, assign) CGFloat fillHight;  //segmentButtons + segmentTopSpace
 
 @end

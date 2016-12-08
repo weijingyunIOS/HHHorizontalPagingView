@@ -21,6 +21,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // 改属性设置相当重要
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
     [self.pagingView reload];
@@ -59,6 +62,7 @@
     ArtTableViewController *vc = [[ArtTableViewController alloc] init];
     [self addChildViewController:vc];
     vc.index = index;
+    vc.fillHight = self.pagingView.segmentTopSpace + 36;
     return (UIScrollView *)vc.view;
 }
 
