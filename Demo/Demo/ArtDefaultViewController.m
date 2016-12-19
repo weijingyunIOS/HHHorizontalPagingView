@@ -114,6 +114,7 @@
         [weakSelf showText:@"grayView click"];
     }];
     
+    self.topConstraint.constant = - self.pagingView.pullOffset;
     return headerView;
 }
 
@@ -163,7 +164,10 @@
  
  */
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset{
-    //    NSLog(@"偏移%f",offset);
+//        NSLog(@"偏移%f",offset);
+    if (offset > 0) {
+        return;
+    }
     self.topConstraint.constant = offset;
 }
 

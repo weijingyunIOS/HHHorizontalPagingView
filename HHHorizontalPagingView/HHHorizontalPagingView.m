@@ -644,13 +644,9 @@ static NSInteger pagingScrollViewTag             = 2000;
             
         }
         
-        
-        if (self.headerOriginYConstraint.constant > 0) {
-            
-            self.contentOffset = CGPointMake(0, -self.headerOriginYConstraint.constant);
-            if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
-                [self.delegate pagingView:self scrollTopOffset:-self.headerOriginYConstraint.constant];
-            }
+        self.contentOffset = self.currentScrollView.contentOffset;
+        if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+            [self.delegate pagingView:self scrollTopOffset:self.contentOffset.y];
         }
         
         
