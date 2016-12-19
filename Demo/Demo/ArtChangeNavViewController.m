@@ -75,25 +75,9 @@
 
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView{
     
-    UIScrollView *scrollView = [[UIScrollView alloc] init];
-    scrollView.backgroundColor = [UIColor purpleColor];
-    UIButton *but1 = [UIButton buttonWithType:UIButtonTypeCustom];
-    but1.frame = CGRectMake(0, 0, 100, 200);
-    [but1 addTarget:self action:@selector(but1Click) forControlEvents:UIControlEventTouchUpInside];
-    but1.backgroundColor = [UIColor whiteColor];
-    [scrollView addSubview:but1];
-    
-    UIButton *but2 = [UIButton buttonWithType:UIButtonTypeCustom];
-    but2.frame = CGRectMake(800, 0, 100, 200);
-    [but2 addTarget:self action:@selector(but2Click) forControlEvents:UIControlEventTouchUpInside];
-    but2.backgroundColor = [UIColor whiteColor];
-    [scrollView addSubview:but2];
-    
-    scrollView.contentSize = CGSizeMake(1000, 250);
-    scrollView.frame = CGRectMake(0, 0, 480, 250);
-    //    UIView *headerView = [[UIView alloc] init];
-    //    [headerView addSubview:scrollView];
-    return scrollView;
+    UIView *headerView = [[UIView alloc] init];
+    headerView.backgroundColor = [UIColor orangeColor];
+    return headerView;
 }
 
 - (void)but1Click{
@@ -143,6 +127,15 @@
 // 视图切换完成时调用
 - (void)pagingView:(HHHorizontalPagingView*)pagingView didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex{
     NSLog(@"%s \n %tu  to  %tu",__func__,aIndex,toIndex);
+}
+
+- (void)pagingView:(HHHorizontalPagingView *)pagingView scrollTopOffset:(CGFloat)offset {
+
+    NSLog(@"__ %f  __  %f",offset,self.pagingView.pullOffset);
+    if (offset > 0) { // > 0 代表已经只顶了
+        return;
+    }
+    
 }
 
 #pragma mark - 懒加载
