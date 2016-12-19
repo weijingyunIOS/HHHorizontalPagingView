@@ -38,15 +38,12 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 // 视图切换完成时调用 从哪里切换到哪里
 - (void)pagingView:(HHHorizontalPagingView*)pagingView didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex;
 
-// 监听当前的scrollView停止滚动
-- (void)pagingView:(HHHorizontalPagingView*)pagingView scrollViewDidScroll:(UIScrollView *)scrollView;
-
 /*
   与 magnifyTopConstraint 属性相对应  下拉时如需要放大，则传入的图片的上边距约束
   考虑到开发中很少使用原生约束，故放开代理方法 用于用户自行根据 偏移处理相应效果
  
   该版本将 magnifyTopConstraint 属性删除
-  allowPullToRefresh为YES 时 该代理失效
+  该代理 和 监听 self.contentOffset 效果是一样的
  */
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset;
 

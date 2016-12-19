@@ -588,10 +588,6 @@ static NSInteger pagingScrollViewTag             = 2000;
             return;
         }
         
-        if ([self.delegate respondsToSelector:@selector(pagingView:scrollViewDidScroll:)]) {
-            [self.delegate pagingView:self scrollViewDidScroll:self.currentScrollView];
-        }
-        
         CGFloat oldOffsetY          = [change[NSKeyValueChangeOldKey] CGPointValue].y;
         CGFloat newOffsetY          = [change[NSKeyValueChangeNewKey] CGPointValue].y;
         CGFloat deltaY              = newOffsetY - oldOffsetY;
@@ -645,7 +641,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         }
         
         self.contentOffset = self.currentScrollView.contentOffset;
-        if (!self.allowPullToRefresh && [self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
+        if ([self.delegate respondsToSelector:@selector(pagingView:scrollTopOffset:)]) {
             [self.delegate pagingView:self scrollTopOffset:self.contentOffset.y];
         }
         

@@ -14,6 +14,9 @@
 
 @property (nonatomic, strong) HHHorizontalPagingView *pagingView;
 
+@property (nonatomic, strong) UIView *navView;
+
+
 @end
 
 @implementation ArtChangeNavViewController
@@ -24,6 +27,13 @@
     //     Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
     [self.pagingView reload];
+    
+    
+    self.navView = [[UIView alloc] init];
+    [self.view addSubview:self.navView];
+    self.navView.backgroundColor = [UIColor colorWithWhite:1 alpha: 0];
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    self.navView.frame = CGRectMake(0, 0, size.width, 84);
     
 }
 
@@ -131,10 +141,18 @@
 
 - (void)pagingView:(HHHorizontalPagingView *)pagingView scrollTopOffset:(CGFloat)offset {
 
-    NSLog(@"__ %f  __  %f",offset,self.pagingView.pullOffset);
-    if (offset > 0) { // > 0 代表已经只顶了
+
+    if (offset >= -84 - 36) { // > 0 代表已经只顶了
         return;
     }
+    
+    CGFloat fm = self.pagingView.pullOffset - 84.0 - 36;
+    CGFloat fz = - 84 - 36 - offset;
+    float al = 1.0 - fz / fm;
+    al = al <= 0.05 ? 0 : al;
+    al = al >= 0.95 ? 1 : al;
+       NSLog(@"__ %f  __  %f __ %lf",offset,self.pagingView.pullOffset, al);
+    self.navView.backgroundColor = [UIColor colorWithWhite:1 alpha: al];
     
 }
 
@@ -143,7 +161,7 @@
     if (!_pagingView) {
         CGSize size = [UIScreen mainScreen].bounds.size;
         _pagingView = [[HHHorizontalPagingView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) delegate:self];
-        _pagingView.segmentTopSpace = 20;
+        _pagingView.segmentTopSpace = 84.;
         _pagingView.segmentView.backgroundColor = [UIColor colorWithRed:242./255. green:242./255. blue:242./255. alpha:1.0];
         _pagingView.maxCacheCout = 5.;
         _pagingView.isGesturesSimulate = YES;
