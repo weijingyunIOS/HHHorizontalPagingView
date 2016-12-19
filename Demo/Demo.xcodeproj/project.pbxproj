@@ -15,6 +15,7 @@
 		5C68B8B41DF2B9BC00F1C693 /* DynamicItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68B8B31DF2B9BC00F1C693 /* DynamicItem.m */; };
 		5C68B8B71DF2CFD800F1C693 /* UIScrollView+Dragging.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68B8B61DF2CFD800F1C693 /* UIScrollView+Dragging.m */; };
 		5C68B8C41DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68B8C31DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m */; };
+		5C7C2D221E079047002EB69D /* ArtChangeNavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C2D211E079047002EB69D /* ArtChangeNavViewController.m */; };
 		5CB825AF1DCB45CB007DFD1D /* SDBaseRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB825AA1DCB45CB007DFD1D /* SDBaseRefreshView.m */; };
 		5CB825B11DCB45CB007DFD1D /* SDTimeLineRefreshHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB825AE1DCB45CB007DFD1D /* SDTimeLineRefreshHeader.m */; };
 		5CCDB9F61DCB3AA9000536D2 /* ArtWholePullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */; };
@@ -64,6 +65,8 @@
 		5C68B8B61DF2CFD800F1C693 /* UIScrollView+Dragging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+Dragging.m"; sourceTree = "<group>"; };
 		5C68B8C21DF2DC2C00F1C693 /* ArtScrollHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtScrollHeaderViewController.h; sourceTree = "<group>"; };
 		5C68B8C31DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtScrollHeaderViewController.m; sourceTree = "<group>"; };
+		5C7C2D201E079047002EB69D /* ArtChangeNavViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtChangeNavViewController.h; sourceTree = "<group>"; };
+		5C7C2D211E079047002EB69D /* ArtChangeNavViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtChangeNavViewController.m; sourceTree = "<group>"; };
 		5CB825A91DCB45CB007DFD1D /* SDBaseRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDBaseRefreshView.h; sourceTree = "<group>"; };
 		5CB825AA1DCB45CB007DFD1D /* SDBaseRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDBaseRefreshView.m; sourceTree = "<group>"; };
 		5CB825AD1DCB45CB007DFD1D /* SDTimeLineRefreshHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDTimeLineRefreshHeader.h; sourceTree = "<group>"; };
@@ -134,6 +137,8 @@
 				5CCDB9F51DCB3AA9000536D2 /* ArtWholePullViewController.m */,
 				5C68B8C21DF2DC2C00F1C693 /* ArtScrollHeaderViewController.h */,
 				5C68B8C31DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m */,
+				5C7C2D201E079047002EB69D /* ArtChangeNavViewController.h */,
+				5C7C2D211E079047002EB69D /* ArtChangeNavViewController.m */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -377,6 +382,7 @@
 				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */,
 				5C68B8B71DF2CFD800F1C693 /* UIScrollView+Dragging.m in Sources */,
+				5C7C2D221E079047002EB69D /* ArtChangeNavViewController.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
 				5C68B8C41DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m in Sources */,
 				5C33A7BF1DB9FAC400E05E6E /* UIScrollView+SVPullToRefresh.m in Sources */,

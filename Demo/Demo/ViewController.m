@@ -11,6 +11,7 @@
 #import "ArtPullViewController.h"
 #import "ArtWholePullViewController.h"
 #import "ArtScrollHeaderViewController.h"
+#import "ArtChangeNavViewController.h"
 
 #define kClass @"kClass"
 #define kTitle @"kTitle"
@@ -29,7 +30,8 @@
     self.dataArray = @[@{kClass : [ArtDefaultViewController class],kTitle : @"下拉放大图片Demo"},
                        @{kClass : [ArtPullViewController class],kTitle : @"单独下拉刷新"},
                        @{kClass : [ArtWholePullViewController class],kTitle : @"整体下拉刷新－微信朋友圈"},
-                       @{kClass : [ArtScrollHeaderViewController class],kTitle : @"headerView是一个ScrollView"}];
+                       @{kClass : [ArtScrollHeaderViewController class],kTitle : @"headerView是一个ScrollView"},
+                       @{kClass : [ArtChangeNavViewController class],kTitle : @"导航栏变化"}];
 }
 
 - (void)loadView{
