@@ -132,7 +132,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)scrollToIndex:(NSInteger)pageIndex {
-    [self segmentButtonEvent:self.segmentView.segmentButtons[pageIndex]];
+    [self segmentViewEvent:self.segmentView.segmentButtons[pageIndex]];
 }
 
 - (void)scrollEnable:(BOOL)enable {
@@ -214,27 +214,27 @@ static NSInteger pagingScrollViewTag             = 2000;
         [_segmentView configureSegmentButtonLayout];
         __weak typeof(self)weakSelf = self;
         _segmentView.clickBlock = ^(UIButton *but) {
-            [weakSelf segmentButtonEvent:but];
+            [weakSelf segmentViewEvent:but];
         };
     }
     return _segmentView;
 }
 
 
-- (void)segmentButtonEvent:(UIButton *)segmentButton {
+- (void)segmentViewEvent:(UIView *)segmentView {
     
-    NSInteger clickIndex = segmentButton.tag - pagingButtonTag;
+    NSInteger clickIndex = segmentView.tag - pagingButtonTag;
     if (clickIndex >= [self.delegate numberOfSectionsInPagingView:self]) {
         if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
-            [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
+            [self.delegate pagingView:self segmentDidSelected:segmentView atIndex:clickIndex];
         }
         return;
     }
     
     // 在当前页被点击
-    if (segmentButton.selected) {
+    if (clickIndex == self.segmentView.currenPage) {
         if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelectedSameItem:atIndex:)]) {
-            [self.delegate pagingView:self segmentDidSelectedSameItem:segmentButton atIndex:clickIndex];
+            [self.delegate pagingView:self segmentDidSelectedSameItem:segmentView atIndex:clickIndex];
         }
         return;
     }
@@ -249,7 +249,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
     
     if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
-        [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
+        [self.delegate pagingView:self segmentDidSelected:segmentView atIndex:clickIndex];
     }
     
     // 视图切换时执行代码
@@ -492,7 +492,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         //failed说明是点击事件
         if(state == UIGestureRecognizerStateFailed) {
             if(self.currentTouchSubSegment) {
-                [self segmentButtonEvent:self.currentTouchSubSegment];
+                [self segmentViewEvent:self.currentTouchSubSegment];
             }else if(self.currentTouchView) {
                 [self.currentTouchView viewWasTappedPoint:self.currentTouchViewPoint];
             }

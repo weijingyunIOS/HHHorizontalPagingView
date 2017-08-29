@@ -33,9 +33,9 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 
 @optional
 // 非当前页点击segment
-- (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelected:(UIButton *)item atIndex:(NSInteger)selectedIndex;
+- (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelected:(UIView *)item atIndex:(NSInteger)selectedIndex;
 // 当前页点击segment
-- (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelectedSameItem:(UIButton *)item atIndex:(NSInteger)selectedIndex;
+- (void)pagingView:(HHHorizontalPagingView*)pagingView segmentDidSelectedSameItem:(UIView *)item atIndex:(NSInteger)selectedIndex;
 
 // 视图切换完成时调用 从哪里切换到哪里
 - (void)pagingView:(HHHorizontalPagingView*)pagingView didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex;
