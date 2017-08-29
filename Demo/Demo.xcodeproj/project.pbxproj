@@ -98,6 +98,7 @@
 		5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtTableViewController.m; sourceTree = "<group>"; };
 		5CF2BF5C1F55431B00349214 /* JYSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYSegmentView.h; sourceTree = "<group>"; };
 		5CF2BF5D1F55431B00349214 /* JYSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYSegmentView.m; sourceTree = "<group>"; };
+		5CF2BF5F1F55581700349214 /* JYSegmentViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYSegmentViewProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +237,7 @@
 		5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */ = {
 			isa = PBXGroup;
 			children = (
+				5CF2BF5F1F55581700349214 /* JYSegmentViewProtocol.h */,
 				5CF2BF5B1F55430500349214 /* SegmentView */,
 				5CE9F33B1CF9740B00DB414B /* JYPagingView.h */,
 				5CE9F3351CF9737300DB414B /* HHHorizontalPagingView.h */,

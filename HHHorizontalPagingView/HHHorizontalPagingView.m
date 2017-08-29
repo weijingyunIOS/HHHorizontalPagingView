@@ -12,6 +12,8 @@
 #import "UIView+WhenTappedBlocks.h"
 #import "UIScrollView+Dragging.h"
 
+#import "JYSegmentView.h"
+
 NSString* kHHHorizontalScrollViewRefreshStartNotification = @"kHHHorizontalScrollViewRefreshStartNotification";
 NSString* kHHHorizontalScrollViewRefreshEndNotification = @"kHHHorizontalScrollViewRefreshEndNotification";
 NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackRefreshEndNotification";
@@ -20,6 +22,8 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 
 @property (nonatomic, strong) UIView             *headerView;
 @property (nonatomic, strong) NSMutableArray<UIScrollView *>*contentViewArray;
+
+@property (nonatomic, strong) UIView<JYSegmentViewProtocol> *segmentView;
 
 @property (nonatomic, strong) UICollectionView   *horizontalCollectionView;
 
@@ -207,20 +211,22 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
 }
 
-- (JYSegmentView *)segmentView {
+- (UIView<JYSegmentViewProtocol> *)segmentView {
     if(!_segmentView) {
         _segmentView = [[JYSegmentView alloc] init];
-        _segmentView.segmentButtons = [self.delegate segmentButtonsInPagingView:self];
+        
+        JYSegmentView *view = (JYSegmentView *)_segmentView;
+        
+        view.segmentButtons = [self.delegate segmentButtonsInPagingView:self];
         _segmentView.segmentBarHeight = self.segmentBarHeight;
-        [_segmentView configureSegmentButtonLayout];
+        [view configureSegmentButtonLayout];
         __weak typeof(self)weakSelf = self;
-        _segmentView.clickBlock = ^(UIButton *but) {
-            [weakSelf segmentViewEvent:but];
+        _segmentView.clickBlock = ^(UIView *view) {
+            [weakSelf segmentViewEvent:view];
         };
     }
     return _segmentView;
 }
-
 
 - (void)segmentViewEvent:(UIView *)segmentView {
     

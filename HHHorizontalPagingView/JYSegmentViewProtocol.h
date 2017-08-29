@@ -1,25 +1,22 @@
 //
-//  JYSegmentView.h
+//  JYSegmentViewProtocol.h
 //  Demo
 //
 //  Created by weijingyun on 2017/8/29.
 //  Copyright © 2017年 weijingyun. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "JYSegmentViewProtocol.h"
+#import <Foundation/Foundation.h>
 
-@interface JYSegmentView : UIView<JYSegmentViewProtocol>
+static NSInteger pagingSubViewTag                 = 1000;
 
-@property (nonatomic, strong) NSArray            *segmentButtons;
+@protocol JYSegmentViewProtocol <NSObject>
+
 @property (nonatomic, copy) void(^clickBlock)(UIView *clickView);
-@property (nonatomic, assign) CGFloat             segmentBarHeight;
-@property (nonatomic, assign) CGSize              segmentButtonSize;
+@property (nonatomic, assign) CGFloat segmentBarHeight;
 
 // 真实际展现同步
-@property (nonatomic, assign) NSInteger           currenPage; // 当前页Page
-
-- (void)configureSegmentButtonLayout;
+@property (nonatomic, assign) NSInteger currenPage; // 当前页Page
 
 
 // 只是标记选中状态的，和显示选中状态

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JYSegmentView.h"
+#import "JYSegmentViewProtocol.h"
 
 @class HHHorizontalPagingView;
 
@@ -97,7 +97,7 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 /**
  *  切换视图
  */
-@property (nonatomic, strong) JYSegmentView      *segmentView;
+@property (nonatomic, strong, readonly) UIView<JYSegmentViewProtocol> *segmentView;
 
 
 /**
