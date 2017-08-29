@@ -95,7 +95,7 @@
             [b setSelected:NO];
         }
     }
-    self.currenSelectedBut = selectedPage;
+    self.currenSelectedPage = selectedPage;
 
 }
 

@@ -656,7 +656,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         return;
     }
 
-    NSInteger currentPage = self.segmentView.currenSelectedBut;
+    NSInteger currentPage = self.segmentView.currenSelectedPage;
     if (offsetpage - currentPage > 0) {
         if (py > 0.55) {
            [self.segmentView setSelectedPage:currentPage + 1];

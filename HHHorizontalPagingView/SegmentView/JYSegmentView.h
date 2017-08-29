@@ -15,10 +15,9 @@ static NSInteger pagingButtonTag                 = 1000;
 @property (nonatomic, copy) void(^clickBlock)(UIButton *but);
 @property (nonatomic, assign) CGFloat             segmentBarHeight;
 @property (nonatomic, assign) CGSize              segmentButtonSize;
-@property (nonatomic, strong) NSArray            *segmentButtons;
-@property (nonatomic, assign) NSInteger            currenPage; // 当前页
-
-@property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
+@property (nonatomic, strong) NSArray             *segmentButtons;
+@property (nonatomic, assign) NSInteger           currenPage; // 当前页
+@property (nonatomic, assign) NSInteger           currenSelectedPage; // 当前选中的Page
 
 - (void)configureSegmentButtonLayout;
 
