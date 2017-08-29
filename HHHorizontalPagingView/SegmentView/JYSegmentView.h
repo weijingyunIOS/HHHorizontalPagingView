@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+static NSInteger pagingButtonTag                 = 1000;
+
 @interface JYSegmentView : UIView
 
 @property (nonatomic, copy) void(^clickBlock)(UIButton *but);

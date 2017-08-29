@@ -8,8 +8,6 @@
 
 #import "JYSegmentView.h"
 
-static NSInteger pagingButtonTag                 = 1000;
-
 @interface JYSegmentView ()
 
 @property (nonatomic, strong) NSMutableArray     *segmentButtonConstraintArray;

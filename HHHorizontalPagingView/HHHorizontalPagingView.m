@@ -30,8 +30,6 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 @property (nonatomic, assign) CGFloat            segmentBarHeight;
 @property (nonatomic, assign) BOOL               isSwitching;
 
-@property (nonatomic, strong) NSMutableArray     *segmentButtonConstraintArray;
-
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
@@ -58,7 +56,6 @@ static void *HHHorizontalPagingViewScrollContext = &HHHorizontalPagingViewScroll
 static void *HHHorizontalPagingViewInsetContext  = &HHHorizontalPagingViewInsetContext;
 static void *HHHorizontalPagingViewPanContext    = &HHHorizontalPagingViewPanContext;
 static NSString *pagingCellIdentifier            = @"PagingCellIdentifier";
-static NSInteger pagingButtonTag                 = 1000;
 static NSInteger pagingScrollViewTag             = 2000;
 
 #pragma mark - HHHorizontalPagingView
@@ -755,13 +752,6 @@ static NSInteger pagingScrollViewTag             = 2000;
         _animator = [[UIDynamicAnimator alloc] init];
     }
     return _animator;
-}
-
-- (NSMutableArray *)segmentButtonConstraintArray{
-    if (!_segmentButtonConstraintArray) {
-        _segmentButtonConstraintArray = [NSMutableArray array];
-    }
-    return _segmentButtonConstraintArray;
 }
 
 - (NSMutableArray<UIScrollView *> *)contentViewArray{
