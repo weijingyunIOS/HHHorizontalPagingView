@@ -29,6 +29,7 @@
 		5CE9F3391CF9737300DB414B /* HHHorizontalPagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */; };
 		5CE9F33A1CF9737300DB414B /* UIView+WhenTappedBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3381CF9737300DB414B /* UIView+WhenTappedBlocks.m */; };
 		5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */; };
+		5CF2BF5E1F55431B00349214 /* JYSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2BF5D1F55431B00349214 /* JYSegmentView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +96,8 @@
 		5CE9F33B1CF9740B00DB414B /* JYPagingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JYPagingView.h; sourceTree = "<group>"; };
 		5CE9F3451CF9A71800DB414B /* ArtTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtTableViewController.h; sourceTree = "<group>"; };
 		5CE9F3461CF9A71800DB414B /* ArtTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtTableViewController.m; sourceTree = "<group>"; };
+		5CF2BF5C1F55431B00349214 /* JYSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYSegmentView.h; sourceTree = "<group>"; };
+		5CF2BF5D1F55431B00349214 /* JYSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYSegmentView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +236,7 @@
 		5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */ = {
 			isa = PBXGroup;
 			children = (
+				5CF2BF5B1F55430500349214 /* SegmentView */,
 				5CE9F33B1CF9740B00DB414B /* JYPagingView.h */,
 				5CE9F3351CF9737300DB414B /* HHHorizontalPagingView.h */,
 				5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */,
@@ -245,6 +249,15 @@
 			);
 			name = HHHorizontalPagingView;
 			path = ../../HHHorizontalPagingView;
+			sourceTree = "<group>";
+		};
+		5CF2BF5B1F55430500349214 /* SegmentView */ = {
+			isa = PBXGroup;
+			children = (
+				5CF2BF5C1F55431B00349214 /* JYSegmentView.h */,
+				5CF2BF5D1F55431B00349214 /* JYSegmentView.m */,
+			);
+			path = SegmentView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,6 +327,8 @@
 				TargetAttributes = {
 					5CE9F2F61CF9729700DB414B = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = XWNPFKK4U5;
+						ProvisioningStyle = Automatic;
 					};
 					5CE9F30F1CF9729800DB414B = {
 						CreatedOnToolsVersion = 7.3;
@@ -382,6 +397,7 @@
 				5CE9F3471CF9A71800DB414B /* ArtTableViewController.m in Sources */,
 				5C33A7BE1DB9FAC400E05E6E /* UIScrollView+SVInfiniteScrolling.m in Sources */,
 				5C68B8B71DF2CFD800F1C693 /* UIScrollView+Dragging.m in Sources */,
+				5CF2BF5E1F55431B00349214 /* JYSegmentView.m in Sources */,
 				5C7C2D221E079047002EB69D /* ArtChangeNavViewController.m in Sources */,
 				5CE9F2FF1CF9729800DB414B /* AppDelegate.m in Sources */,
 				5C68B8C41DF2DC2C00F1C693 /* ArtScrollHeaderViewController.m in Sources */,
@@ -537,14 +553,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Tiefeng liu (XU7P666F6F)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Tiefeng liu (XU7P666F6F)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = XWNPFKK4U5;
 				INFOPLIST_FILE = Demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yunyunxiao.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5c19da05-2fac-428f-b197-6071a673e933";
-				PROVISIONING_PROFILE_SPECIFIER = all;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -553,14 +570,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Tiefeng liu (XU7P666F6F)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Tiefeng liu (XU7P666F6F)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = XWNPFKK4U5;
 				INFOPLIST_FILE = Demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yunyunxiao.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5c19da05-2fac-428f-b197-6071a673e933";
-				PROVISIONING_PROFILE_SPECIFIER = all;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

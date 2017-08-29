@@ -19,10 +19,7 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 @interface HHHorizontalPagingView () <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) UIView             *headerView;
-@property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, strong) NSMutableArray<UIScrollView *>*contentViewArray;
-
-@property (nonatomic, strong, readwrite) UIView  *segmentView;
 
 @property (nonatomic, strong) UICollectionView   *horizontalCollectionView;
 
@@ -38,7 +35,6 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
-@property (nonatomic, assign) NSInteger          currenPage; // 当前页
 @property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
@@ -110,7 +106,6 @@ static NSInteger pagingScrollViewTag             = 2000;
   
     self.headerView                  = [self.delegate headerViewInPagingView:self];
     self.headerViewHeight            = [self.delegate headerHeightInPagingView:self];
-    self.segmentButtons              = [self.delegate segmentButtonsInPagingView:self];
     self.segmentBarHeight            = [self.delegate segmentHeightInPagingView:self];
     [self configureHeaderView];
     [self configureSegmentView];
@@ -141,7 +136,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)scrollToIndex:(NSInteger)pageIndex {
-    [self segmentButtonEvent:self.segmentButtons[pageIndex]];
+    [self segmentButtonEvent:self.segmentView.segmentButtons[pageIndex]];
 }
 
 - (void)scrollEnable:(BOOL)enable {
@@ -215,75 +210,24 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
 }
 
-- (UIView *)segmentView {
+- (JYSegmentView *)segmentView {
     if(!_segmentView) {
-        _segmentView = [[UIView alloc] init];
-        [self configureSegmentButtonLayout];
+        _segmentView = [[JYSegmentView alloc] init];
+        _segmentView.segmentButtons = [self.delegate segmentButtonsInPagingView:self];
+        _segmentView.segmentBarHeight = self.segmentBarHeight;
+        [_segmentView configureSegmentButtonLayout];
+        __weak typeof(self)weakSelf = self;
+        _segmentView.clickBlock = ^(UIButton *but) {
+            [weakSelf segmentButtonEvent:but];
+        };
     }
     return _segmentView;
 }
 
-- (void)configureSegmentButtonLayout {
-    if([self.segmentButtons count] > 0) {
-        
-        CGFloat buttonTop    = 0.f;
-        CGFloat buttonLeft   = 0.f;
-        CGFloat buttonWidth  = 0.f;
-        CGFloat buttonHeight = 0.f;
-        if(CGSizeEqualToSize(self.segmentButtonSize, CGSizeZero)) {
-            buttonWidth = [[UIScreen mainScreen] bounds].size.width/(CGFloat)[self.segmentButtons count];
-            buttonHeight = self.segmentBarHeight;
-        }else {
-            buttonWidth = self.segmentButtonSize.width;
-            buttonHeight = self.segmentButtonSize.height;
-            buttonTop = (self.segmentBarHeight - buttonHeight)/2.f;
-            buttonLeft = ([[UIScreen mainScreen] bounds].size.width - ((CGFloat)[self.segmentButtons count]*buttonWidth))/((CGFloat)[self.segmentButtons count]+1);
-        }
-        
-        [_segmentView removeConstraints:self.segmentButtonConstraintArray];
-        for(int i = 0; i < [self.segmentButtons count]; i++) {
-            UIButton *segmentButton = self.segmentButtons[i];
-            [segmentButton removeConstraints:self.segmentButtonConstraintArray];
-            segmentButton.tag = pagingButtonTag+i;
-            [segmentButton addTarget:self action:@selector(segmentButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
-            [_segmentView addSubview:segmentButton];
-            
-            if(i == 0) {
-                [segmentButton setSelected:YES];
-                self.currenPage = 0;
-            }
-            
-            segmentButton.translatesAutoresizingMaskIntoConstraints = NO;
-            
-            NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:segmentButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_segmentView attribute:NSLayoutAttributeTop multiplier:1 constant:buttonTop];
-            NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:segmentButton attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_segmentView attribute:NSLayoutAttributeLeft multiplier:1 constant:i*buttonWidth+buttonLeft*i+buttonLeft];
-            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:segmentButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:buttonWidth];
-            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:segmentButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:buttonHeight];
-            
-            [self.segmentButtonConstraintArray addObject:topConstraint];
-            [self.segmentButtonConstraintArray addObject:leftConstraint];
-            [self.segmentButtonConstraintArray addObject:widthConstraint];
-            [self.segmentButtonConstraintArray addObject:heightConstraint];
-            
-            [_segmentView addConstraint:topConstraint];
-            [_segmentView addConstraint:leftConstraint];
-            [segmentButton addConstraint:widthConstraint];
-            [segmentButton addConstraint:heightConstraint];
-            
-            if (segmentButton.currentImage) {
-                 CGFloat imageWidth = segmentButton.imageView.bounds.size.width;
-                 CGFloat labelWidth = segmentButton.titleLabel.bounds.size.width;
-                 segmentButton.imageEdgeInsets = UIEdgeInsetsMake(0, labelWidth + 5, 0, -labelWidth);
-                 segmentButton.titleEdgeInsets = UIEdgeInsetsMake(0, -imageWidth, 0, imageWidth);
-            }
-        }
-        
-    }
-}
 
 - (void)segmentButtonEvent:(UIButton *)segmentButton {
     
-    NSInteger clickIndex = segmentButton.tag-pagingButtonTag;
+    NSInteger clickIndex = segmentButton.tag - pagingButtonTag;
     if (clickIndex >= [self.delegate numberOfSectionsInPagingView:self]) {
         if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
             [self.delegate pagingView:self segmentDidSelected:segmentButton atIndex:clickIndex];
@@ -313,7 +257,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     }
     
     // 视图切换时执行代码
-    [self didSwitchIndex:self.currenPage to:clickIndex];
+    [self didSwitchIndex:self.segmentView.currenPage to:clickIndex];
 }
 
 - (void)adjustOffsetContentView:(UIScrollView *)scrollView {
@@ -368,7 +312,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         self.currentTouchView = nil;
         self.currentTouchButton = nil;
         
-        [self.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.segmentView.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if(obj == view) {
                 self.currentTouchButton = obj;
             }
@@ -503,13 +447,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     [self.animator addBehavior:inertialBehavior];
 }
 
-
-#pragma mark - Setter
-- (void)setSegmentButtonSize:(CGSize)segmentButtonSize {
-    _segmentButtonSize = segmentButtonSize;
-    [self configureSegmentButtonLayout];
-    
-}
 
 #pragma mark - UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -689,7 +626,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 // 视图切换时执行代码
 - (void)didSwitchIndex:(NSInteger)aIndex to:(NSInteger)toIndex{
     
-    self.currenPage = toIndex;
+    self.segmentView.currenPage = toIndex;
     self.currentScrollView = [self scrollViewAtIndex:toIndex];
     
     if (aIndex == toIndex) {
@@ -744,11 +681,11 @@ static NSInteger pagingScrollViewTag             = 2000;
     
     self.isScroll = NO;
     NSInteger currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
-    [self didSwitchIndex:self.currenPage to:currentPage];
+    [self didSwitchIndex:self.segmentView.currenPage to:currentPage];
 }
 
 - (void)setSelectedButPage:(NSInteger)buttonPage{
-    for(UIButton *b in self.segmentButtons) {
+    for(UIButton *b in self.segmentView.segmentButtons) {
         if(b.tag - pagingButtonTag == buttonPage) {
             [b setSelected:YES];
         }else {

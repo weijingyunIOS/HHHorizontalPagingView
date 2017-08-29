@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JYSegmentView.h"
+
 @class HHHorizontalPagingView;
 
 // 使用 allowPullToRefresh 结束刷新需要发出通知
@@ -93,15 +95,9 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 
 
 /**
- *  自定义segmentButton的size
- */
-@property (nonatomic, assign) CGSize segmentButtonSize;
-
-
-/**
  *  切换视图
  */
-@property (nonatomic, strong, readonly) UIView *segmentView;
+@property (nonatomic, strong) JYSegmentView      *segmentView;
 
 
 /**
