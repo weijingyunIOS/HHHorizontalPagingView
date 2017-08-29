@@ -43,7 +43,7 @@
         for(int i = 0; i < [self.segmentButtons count]; i++) {
             UIButton *segmentButton = self.segmentButtons[i];
             [segmentButton removeConstraints:self.segmentButtonConstraintArray];
-            segmentButton.tag = pagingButtonTag+i;
+            segmentButton.tag = pagingSubViewTag+i;
             [segmentButton addTarget:self action:@selector(segmentButtonEvent:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:segmentButton];
             
@@ -89,7 +89,7 @@
 - (void)setSelectedPage:(NSInteger)selectedPage {
     
     for(UIButton *b in self.segmentButtons) {
-        if(b.tag - pagingButtonTag == selectedPage) {
+        if(b.tag - pagingSubViewTag == selectedPage) {
             [b setSelected:YES];
         }else {
             [b setSelected:NO];

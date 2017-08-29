@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-static NSInteger pagingButtonTag                 = 1000;
+static NSInteger pagingSubViewTag                 = 1000;
 
 @interface JYSegmentView : UIView
 
+@property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, copy) void(^clickBlock)(UIButton *but);
 @property (nonatomic, assign) CGFloat             segmentBarHeight;
 @property (nonatomic, assign) CGSize              segmentButtonSize;
-@property (nonatomic, strong) NSArray             *segmentButtons;
 
 // 真实际展现同步
 @property (nonatomic, assign) NSInteger           currenPage; // 当前页Page

@@ -75,6 +75,7 @@
     self.navView.frame = CGRectMake(0, 0, size.width, 84);
     [self.view addSubview:self.navView];
     [self.navView.leftBut addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.pagingView scrollToIndex:3];
 }
 
 - (void)back {

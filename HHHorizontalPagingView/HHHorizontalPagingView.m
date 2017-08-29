@@ -132,7 +132,8 @@ static NSInteger pagingScrollViewTag             = 2000;
 }
 
 - (void)scrollToIndex:(NSInteger)pageIndex {
-    [self segmentViewEvent:self.segmentView.segmentButtons[pageIndex]];
+    UIView *clickView = [self.segmentView viewWithTag:pagingSubViewTag + pageIndex];
+    [self segmentViewEvent:clickView];
 }
 
 - (void)scrollEnable:(BOOL)enable {
@@ -223,7 +224,7 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (void)segmentViewEvent:(UIView *)segmentView {
     
-    NSInteger clickIndex = segmentView.tag - pagingButtonTag;
+    NSInteger clickIndex = segmentView.tag - pagingSubViewTag;
     if (clickIndex >= [self.delegate numberOfSectionsInPagingView:self]) {
         if ([self.delegate respondsToSelector:@selector(pagingView:segmentDidSelected:atIndex:)]) {
             [self.delegate pagingView:self segmentDidSelected:segmentView atIndex:clickIndex];
