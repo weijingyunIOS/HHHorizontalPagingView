@@ -213,13 +213,17 @@ static NSInteger pagingScrollViewTag             = 2000;
 
 - (UIView<JYSegmentViewProtocol> *)segmentView {
     if(!_segmentView) {
-        _segmentView = [[JYSegmentView alloc] init];
         
-        JYSegmentView *view = (JYSegmentView *)_segmentView;
-        
-        view.segmentButtons = [self.delegate segmentButtonsInPagingView:self];
-        _segmentView.segmentBarHeight = self.segmentBarHeight;
-        [view configureSegmentButtonLayout];
+        CGFloat height = [self.delegate segmentHeightInPagingView:self];
+        if ([self.delegate respondsToSelector:@selector(segmentViewHeight:pagingView:)]) {
+            _segmentView = [self.delegate segmentViewHeight:height pagingView:self];
+        }else {
+            _segmentView = [[JYSegmentView alloc] init];
+            JYSegmentView *view = (JYSegmentView *)_segmentView;
+            view.segmentButtons = [self.delegate segmentButtonsInPagingView:self];
+            view.segmentBarHeight = height;
+            [view configureSegmentButtonLayout];
+        }
         __weak typeof(self)weakSelf = self;
         _segmentView.clickBlock = ^(UIView *view) {
             [weakSelf segmentViewEvent:view];

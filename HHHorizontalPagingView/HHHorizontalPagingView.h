@@ -27,9 +27,14 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
 - (CGFloat)headerHeightInPagingView:(HHHorizontalPagingView *)pagingView;
 - (UIView *)headerViewInPagingView:(HHHorizontalPagingView *)pagingView;
 
-//segmentButtons
+#pragma mark - segmentView 配置
+//segmentView 的固定高度 必须实现
 - (CGFloat)segmentHeightInPagingView:(HHHorizontalPagingView *)pagingView;
+@optional
+// 如不实现 segmentViewHeight:pagingView: 则必须实现该代理 采用JYSegmentView
 - (NSArray<UIButton*> *)segmentButtonsInPagingView:(HHHorizontalPagingView *)pagingView;
+- (UIView<JYSegmentViewProtocol> *)segmentViewHeight:(CGFloat)height pagingView:(HHHorizontalPagingView *)pagingView;
+
 
 @optional
 // 非当前页点击segment
@@ -48,6 +53,7 @@ extern NSString* kHHHorizontalTakeBackRefreshEndNotification;
   该代理 和 监听 self.contentOffset 效果是一样的
  */
 - (void)pagingView:(HHHorizontalPagingView*)pagingView scrollTopOffset:(CGFloat)offset;
+
 
 @end
 

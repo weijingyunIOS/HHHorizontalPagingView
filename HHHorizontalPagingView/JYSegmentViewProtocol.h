@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma mark - 加在SegmentView上的view 请标记 tag = currentIndex + pagingSubViewTag
 static NSInteger pagingSubViewTag                 = 1000;
 
 @protocol JYSegmentViewProtocol <NSObject>
 
 @property (nonatomic, copy) void(^clickBlock)(UIView *clickView);
-@property (nonatomic, assign) CGFloat segmentBarHeight;
 
 // 真实际展现同步
 @property (nonatomic, assign) NSInteger currenPage; // 当前页Page
@@ -24,7 +24,8 @@ static NSInteger pagingSubViewTag                 = 1000;
 - (void)setSelectedPage:(NSInteger)selectedPage;
 
 
-// 查找view从选择的上面  isGesturesSimulate = YES 可以不实现
+@optional
+// 查找view从选择的上面  如果isGesturesSimulate = YES 可以不实现
 - (BOOL)findSubSegmentView:(UIView *)view;
 
 @end
