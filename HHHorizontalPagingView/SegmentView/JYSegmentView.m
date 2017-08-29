@@ -96,7 +96,18 @@
         }
     }
     self.currenSelectedPage = selectedPage;
+}
 
+- (BOOL)findSubSegmentView:(UIView *)view {
+    
+    __block BOOL find = NO;
+    [self.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if(obj == view) {
+            find = YES;
+            *stop = YES;
+        }
+    }];
+    return find;
 }
 
 @end

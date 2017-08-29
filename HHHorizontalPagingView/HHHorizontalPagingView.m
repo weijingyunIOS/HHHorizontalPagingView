@@ -32,7 +32,7 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
-@property (nonatomic, strong) UIButton           *currentTouchButton;
+@property (nonatomic, strong) UIView             *currentTouchSubSegment;
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
@@ -306,14 +306,8 @@ static NSInteger pagingScrollViewTag             = 2000;
         self.horizontalCollectionView.scrollEnabled = NO;
         
         self.currentTouchView = nil;
-        self.currentTouchButton = nil;
-        
-        [self.segmentView.segmentButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if(obj == view) {
-                self.currentTouchButton = obj;
-            }
-        }];
-        if(!self.currentTouchButton) {
+        self.currentTouchSubSegment = [self.segmentView findSubSegmentView:view] ? view : nil;
+        if(!self.currentTouchSubSegment) {
             self.currentTouchView = view;
             self.currentTouchViewPoint = [self convertPoint:point toView:self.currentTouchView];
         }else {
@@ -497,13 +491,13 @@ static NSInteger pagingScrollViewTag             = 2000;
         UIGestureRecognizerState state = [change[NSKeyValueChangeNewKey] integerValue];
         //failed说明是点击事件
         if(state == UIGestureRecognizerStateFailed) {
-            if(self.currentTouchButton) {
-                [self segmentButtonEvent:self.currentTouchButton];
+            if(self.currentTouchSubSegment) {
+                [self segmentButtonEvent:self.currentTouchSubSegment];
             }else if(self.currentTouchView) {
                 [self.currentTouchView viewWasTappedPoint:self.currentTouchViewPoint];
             }
             self.currentTouchView = nil;
-            self.currentTouchButton = nil;
+            self.currentTouchSubSegment = nil;
         }else if (state == UIGestureRecognizerStateCancelled || state == UIGestureRecognizerStateEnded) {
             self.isDragging = NO;
         }
@@ -511,7 +505,7 @@ static NSInteger pagingScrollViewTag             = 2000;
     }else if (context == &HHHorizontalPagingViewScrollContext) {
         
         self.currentTouchView = nil;
-        self.currentTouchButton = nil;
+        self.currentTouchSubSegment = nil;
         if (self.isSwitching) {
             return;
         }
