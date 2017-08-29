@@ -33,7 +33,6 @@ NSString* kHHHorizontalTakeBackRefreshEndNotification = @"kHHHorizontalTakeBackR
 @property (nonatomic, strong) UIView             *currentTouchView;
 @property (nonatomic, assign) CGPoint            currentTouchViewPoint;
 @property (nonatomic, strong) UIButton           *currentTouchButton;
-@property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
 @property (nonatomic, assign) CGFloat            pullOffset;
 @property (nonatomic, assign) BOOL               isScroll;// 是否左右滚动
 
@@ -638,7 +637,7 @@ static NSInteger pagingScrollViewTag             = 2000;
         [[NSNotificationCenter defaultCenter] postNotificationName:kHHHorizontalTakeBackRefreshEndNotification object:[self scrollViewAtIndex:aIndex]];
     }
     
-    [self setSelectedButPage:toIndex];
+    [self.segmentView setSelectedPage:toIndex];
     [self removeCacheScrollView];
   
     if ([self.delegate respondsToSelector:@selector(pagingView:didSwitchIndex:to:)]) {
@@ -657,14 +656,14 @@ static NSInteger pagingScrollViewTag             = 2000;
         return;
     }
 
-    NSInteger currentPage = self.currenSelectedBut;
+    NSInteger currentPage = self.segmentView.currenSelectedBut;
     if (offsetpage - currentPage > 0) {
         if (py > 0.55) {
-           [self setSelectedButPage:currentPage + 1];
+           [self.segmentView setSelectedPage:currentPage + 1];
         }
     }else{
         if (py < 0.45) {
-            [self setSelectedButPage:currentPage - 1];
+            [self.segmentView setSelectedPage:currentPage - 1];
         }
     }
 
@@ -679,17 +678,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     self.isScroll = NO;
     NSInteger currentPage = scrollView.contentOffset.x/[[UIScreen mainScreen] bounds].size.width;
     [self didSwitchIndex:self.segmentView.currenPage to:currentPage];
-}
-
-- (void)setSelectedButPage:(NSInteger)buttonPage{
-    for(UIButton *b in self.segmentView.segmentButtons) {
-        if(b.tag - pagingButtonTag == buttonPage) {
-            [b setSelected:YES];
-        }else {
-            [b setSelected:NO];
-        }
-    }
-    self.currenSelectedBut = buttonPage;
 }
 
 - (void)removeCacheScrollView{

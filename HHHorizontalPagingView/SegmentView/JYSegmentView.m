@@ -86,5 +86,17 @@
     }
 }
 
+- (void)setSelectedPage:(NSInteger)selectedPage {
+    
+    for(UIButton *b in self.segmentButtons) {
+        if(b.tag - pagingButtonTag == selectedPage) {
+            [b setSelected:YES];
+        }else {
+            [b setSelected:NO];
+        }
+    }
+    self.currenSelectedBut = selectedPage;
+
+}
 
 @end

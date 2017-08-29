@@ -18,6 +18,10 @@ static NSInteger pagingButtonTag                 = 1000;
 @property (nonatomic, strong) NSArray            *segmentButtons;
 @property (nonatomic, assign) NSInteger            currenPage; // 当前页
 
+@property (nonatomic, assign) NSInteger          currenSelectedBut; // 当前选中的But
+
 - (void)configureSegmentButtonLayout;
+
+- (void)setSelectedPage:(NSInteger)selectedPage;
 
 @end
