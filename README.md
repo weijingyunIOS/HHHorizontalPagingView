@@ -5,11 +5,11 @@
 
 
 # 更新记录
-###1.2.0
+### 1.2.0
 	1.本版本适配了 iOS11。
 	2.将SegmentView抽离支持用户自定义，自定义view只需支持JYSegmentViewProtocol协议即可。具体可参考默认的JYSegmentView
 
-###1.1.1 
+### 1.1.1 
 	最新版采用手势模拟scrollView弹簧及减速效果，解决了之前篡改响应链的痛点
 	完美兼容之前版本，设置 isGesturesSimulate 属性为YES就可以使用，模拟效果
 	接近系统效果，事件响应也不会有问题，只在headerView加了拖拽手势，大家可以
