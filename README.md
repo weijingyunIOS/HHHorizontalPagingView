@@ -4,15 +4,18 @@
 ![演示](http://images2015.cnblogs.com/blog/737816/201612/737816-20161206111835101-2099066825.gif)
 
 
-# 大的更新（1.1.1）
+# 更新记录
+###1.2.0
+	1.本版本适配了 iOS11。
+	2.将SegmentView抽离支持用户自定义，自定义view只需支持JYSegmentViewProtocol协议即可。具体可参考默认的JYSegmentView
 
-[可以看看简书介绍](http://www.jianshu.com/p/6897113b3e9f)
-
-	   最新版采用手势模拟scrollView弹簧及减速效果，解决了之前篡改响应链的痛点
+###1.1.1 
+	最新版采用手势模拟scrollView弹簧及减速效果，解决了之前篡改响应链的痛点
 	完美兼容之前版本，设置 isGesturesSimulate 属性为YES就可以使用，模拟效果
 	接近系统效果，事件响应也不会有问题，只在headerView加了拖拽手势，大家可以
 	实现headerView上加轮播图的效果。
 
+[可以看看简书介绍](http://www.jianshu.com/p/6897113b3e9f)
 # 注意：
 	类似功能的开源框架有不少，大家在要使用时请谨慎选择。
 		1.为了达到 headerView 与 下方ScrollView 的流畅效果，窜改了headerView的响应者链
@@ -38,7 +41,8 @@
 
 通过CocoaPods集成
 
-	pod 'JYHHHorizontalPagingView'        
+	pod 'JYHHHorizontalPagingView', '~> 1.2.0'   
+	如果搜索不到，请 pod repo update 更新仓库     
 
 
 # 实现原理以及介绍
