@@ -88,6 +88,11 @@ static NSInteger pagingScrollViewTag             = 2000;
             self.horizontalCollectionView.prefetchingEnabled = NO;
         }
         
+        // iOS11 适配
+        if (@available(iOS 11.0, *)) {
+            [self.horizontalCollectionView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+        }
+        
         UICollectionViewFlowLayout *tempLayout = (id)self.horizontalCollectionView.collectionViewLayout;
         tempLayout.itemSize = self.horizontalCollectionView.frame.size;
         [self addSubview:self.horizontalCollectionView];
@@ -206,6 +211,9 @@ static NSInteger pagingScrollViewTag             = 2000;
     [scrollView.panGestureRecognizer addObserver:self forKeyPath:NSStringFromSelector(@selector(state)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewPanContext];
     [scrollView addObserver:self forKeyPath:NSStringFromSelector(@selector(contentOffset)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewScrollContext];
     [scrollView addObserver:self forKeyPath:NSStringFromSelector(@selector(contentInset)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewInsetContext];
+    if (@available(iOS 11.0, *)) {
+        [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    }
     if (scrollView == nil) {
         self.currentScrollView = scrollView;
     }

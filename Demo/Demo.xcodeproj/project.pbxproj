@@ -237,8 +237,8 @@
 		5CE9F3341CF9737300DB414B /* HHHorizontalPagingView */ = {
 			isa = PBXGroup;
 			children = (
-				5CF2BF5F1F55581700349214 /* JYSegmentViewProtocol.h */,
 				5CF2BF5B1F55430500349214 /* SegmentView */,
+				5CF2BF5F1F55581700349214 /* JYSegmentViewProtocol.h */,
 				5CE9F33B1CF9740B00DB414B /* JYPagingView.h */,
 				5CE9F3351CF9737300DB414B /* HHHorizontalPagingView.h */,
 				5CE9F3361CF9737300DB414B /* HHHorizontalPagingView.m */,
