@@ -5,7 +5,7 @@
 
 
 # 更新记录
-### 1.2.0
+### 1.2.1
 	1.本版本适配了 iOS11。
 	2.将SegmentView抽离支持用户自定义，自定义view只需支持JYSegmentViewProtocol协议即可。具体可参考默认的JYSegmentView
 
@@ -41,7 +41,7 @@
 
 通过CocoaPods集成
 
-	pod 'JYHHHorizontalPagingView', '~> 1.2.0'   
+	pod 'JYHHHorizontalPagingView', '~> 1.2.1'   
 	如果搜索不到，请 pod repo update 更新仓库     
 
 
