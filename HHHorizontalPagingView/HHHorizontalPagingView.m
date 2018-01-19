@@ -196,6 +196,18 @@ static NSInteger pagingScrollViewTag             = 2000;
 
     if (scrollView == nil) {
         scrollView = [self.delegate pagingView:self viewAtIndex:index];
+        if ([scrollView isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)scrollView;
+            tableView.sectionHeaderHeight = 0.;
+            tableView.sectionFooterHeight = 0.;
+            tableView.estimatedRowHeight = 0.;
+            tableView.estimatedSectionFooterHeight = 0.;
+            tableView.estimatedSectionHeaderHeight = 0.;
+        }
+       
+        if (@available(iOS 11.0, *)) {
+            [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+        }
         [self configureContentView:scrollView];
         scrollView.tag = pagingScrollViewTag + index;
         [self.contentViewArray addObject:scrollView];
@@ -211,9 +223,6 @@ static NSInteger pagingScrollViewTag             = 2000;
     [scrollView.panGestureRecognizer addObserver:self forKeyPath:NSStringFromSelector(@selector(state)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewPanContext];
     [scrollView addObserver:self forKeyPath:NSStringFromSelector(@selector(contentOffset)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewScrollContext];
     [scrollView addObserver:self forKeyPath:NSStringFromSelector(@selector(contentInset)) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&HHHorizontalPagingViewInsetContext];
-    if (@available(iOS 11.0, *)) {
-        [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
-    }
     if (scrollView == nil) {
         self.currentScrollView = scrollView;
     }
